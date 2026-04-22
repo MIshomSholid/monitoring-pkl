@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TempatPkl;
 use Illuminate\Http\Request;
 
-class TempatPklController extends Controller
+class TempatPKLController extends Controller
 {
     public function index(Request $request)
     {

@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\GuruPembimbingController;
 use App\Http\Controllers\Admin\PembimbingLapanganController;
 use App\Http\Controllers\Admin\InformasiPklController;
-use App\Http\Controllers\Admin\TempatPklController;
+use App\Http\Controllers\Admin\TempatPKLController;
 use App\Http\Controllers\Admin\PeriodePklController;
 use App\Http\Controllers\Admin\PenempatanPklController;
 use App\Http\Controllers\Admin\RekapPresensiController;
@@ -213,22 +213,22 @@ Route::middleware(['auth', 'check.active'])
         Route::delete('/informasi-pkl/{informasiPkl}', [InformasiPklController::class, 'destroy'])
             ->name('informasi-pkl.destroy');
 
-        Route::get('/tempat-pkl', [TempatPklController::class, 'index'])
+        Route::get('/tempat-pkl', [TempatPKLController::class, 'index'])
             ->name('tempat-pkl.index');
 
-        Route::get('/tempat-pkl/create', [TempatPklController::class, 'create'])
+        Route::get('/tempat-pkl/create', [TempatPKLController::class, 'create'])
             ->name('tempat-pkl.create');
 
-        Route::post('/tempat-pkl', [TempatPklController::class, 'store'])
+        Route::post('/tempat-pkl', [TempatPKLController::class, 'store'])
             ->name('tempat-pkl.store');
 
-        Route::get('/tempat-pkl/{tempatPkl}/edit', [TempatPklController::class, 'edit'])
+        Route::get('/tempat-pkl/{tempatPkl}/edit', [TempatPKLController::class, 'edit'])
             ->name('tempat-pkl.edit');
 
-        Route::put('/tempat-pkl/{tempatPkl}', [TempatPklController::class, 'update'])
+        Route::put('/tempat-pkl/{tempatPkl}', [TempatPKLController::class, 'update'])
             ->name('tempat-pkl.update');
 
-        Route::delete('/tempat-pkl/{tempatPkl}', [TempatPklController::class, 'destroy'])
+        Route::delete('/tempat-pkl/{tempatPkl}', [TempatPKLController::class, 'destroy'])
             ->name('tempat-pkl.destroy');
 
         Route::resource('/periode', PeriodePklController::class)
