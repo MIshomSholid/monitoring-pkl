@@ -1,4 +1,8 @@
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://accomplished-truth-production.up.railway.app/socket.io/socket.io.js"></script>
+
+<script>
+    window.REALTIME_URL = "https://accomplished-truth-production.up.railway.app";
+</script>
 
 <script>
     window.REALTIME_CONFIG = {

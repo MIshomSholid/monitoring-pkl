@@ -83,7 +83,7 @@ app.post("/broadcast", (req, res) => {
 
 /* ================= SERVER START ================= */
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
