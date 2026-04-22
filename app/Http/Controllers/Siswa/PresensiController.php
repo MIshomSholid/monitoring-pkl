@@ -255,7 +255,7 @@ class PresensiController extends Controller
     /* ================= BROADCAST HELPER ================= */
     private function broadcastPresensi($presensi, $penempatan)
     {
-        Http::post('http://localhost:3001/broadcast', [
+        Http::post(env('REALTIME_URL') . '/broadcast', [
             'event' => 'presensi.created',
             'data' => [
                 'id' => $presensi->id,

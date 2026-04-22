@@ -9,7 +9,7 @@ let socket = null;
  * Inisialisasi koneksi socket
  * @param {string} url - URL server Node.js
  */
-export function initSocket(url = 'http://localhost:3000') {
+export function initSocket(url = window.REALTIME_URL) {
     if (socket) return socket;
 
     socket = io(url, {
@@ -45,7 +45,7 @@ export function emitPresensiCreated(data) {
         return;
     }
 
-    socket.emit('presensi-created', data);
+    socket.emit('presensi.created', data);
 }
 
 /**
@@ -58,5 +58,5 @@ export function onPresensiCreated(callback) {
         return;
     }
 
-    socket.on('presensi-created', callback);
+    socket.on('presensi.created', callback);
 }

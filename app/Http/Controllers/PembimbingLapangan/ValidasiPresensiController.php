@@ -81,7 +81,7 @@ class ValidasiPresensiController extends Controller
         ]);
 
         // REALTIME NOTIFIKASI VIA WEBSOCKET
-        Http::post('http://localhost:3001/broadcast', [
+        Http::post(env('REALTIME_URL') . '/broadcast', [
             'event' => 'presensi.validated',
             'data' => [
                 'id' => $presensi->id,
@@ -115,7 +115,7 @@ class ValidasiPresensiController extends Controller
         ]);
 
         // REALTIME NOTIFIKASI VIA WEBSOCKET
-        Http::post('http://localhost:3001/broadcast', [
+        Http::post(env('REALTIME_URL') . '/broadcast', [
             'event' => 'presensi.validated',
             'data' => [
                 'id' => $presensi->id,

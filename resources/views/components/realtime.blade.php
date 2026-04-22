@@ -1,4 +1,4 @@
-<script src="http://localhost:3001/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
 <script>
     window.REALTIME_CONFIG = {
