@@ -1,17 +1,18 @@
 (function () {
-
     if (typeof io === "undefined") {
         console.warn("Socket.IO not loaded");
         return;
     }
 
     const { userId, role } = window.REALTIME_CONFIG || {};
-    const socket = io("http://localhost:3001");
+    const socket = io("https://accomplished-truth.up.railway.app", {
+        transports: ["websocket"],
+    });
 
     socket.on("connect", function () {
         socket.emit("join-user", {
             user_id: userId,
-            role: role
+            role: role,
         });
 
         console.log("[Realtime] Connected as:", role);
@@ -20,7 +21,6 @@
     socket.on("presensi.created", handlePresensiCreated);
 
     socket.on("presensi.validated", function (data) {
-
         console.log("[Realtime] Presensi validated:", data);
 
         const card = document.getElementById("presensi-card-" + data.id);
@@ -32,11 +32,9 @@
         if (row) {
             row.remove();
         }
-
     });
 
     function handlePresensiCreated(data) {
-
         console.log("[Realtime] Presensi:", data);
 
         /* =============================
@@ -46,7 +44,6 @@
         const cardContainer = document.querySelector("#presensi-container");
 
         if (cardContainer) {
-
             if (document.getElementById("presensi-card-" + data.id)) return;
 
             const card = `
@@ -58,7 +55,7 @@
                         <p><span class="font-medium">Nama Siswa:</span> ${data.nama_siswa}</p>
 
                         <p><span class="font-medium">Tempat PKL:</span> 
-                            ${data.nama_perusahaan ?? '-'}
+                            ${data.nama_perusahaan ?? "-"}
                         </p>
 
                         <p><span class="font-medium">Jenis Presensi:</span> 
@@ -74,19 +71,26 @@
                         </p>
 
                         <p><span class="font-medium">Jarak:</span> 
-                            ${data.jarak_meter
-                    ? Number(parseFloat(data.jarak_meter).toFixed(2)) + " meter"
-                    : "-"
-                }
+                            ${
+                                data.jarak_meter
+                                    ? Number(
+                                          parseFloat(data.jarak_meter).toFixed(
+                                              2,
+                                          ),
+                                      ) + " meter"
+                                    : "-"
+                            }
                         </p>
 
                         <p class="md:col-span-2">
                             <span class="font-medium">Koordinat:</span>
-                            ${data.latitude && data.longitude
-                    ? parseFloat(data.latitude).toFixed(8) + ", " +
-                    parseFloat(data.longitude).toFixed(8)
-                    : "-"
-                }
+                            ${
+                                data.latitude && data.longitude
+                                    ? parseFloat(data.latitude).toFixed(8) +
+                                      ", " +
+                                      parseFloat(data.longitude).toFixed(8)
+                                    : "-"
+                            }
                         </p>
 
                     </div>
@@ -96,20 +100,21 @@
                             Bukti Presensi
                         </p>
 
-                        ${data.foto_presensi
-                    ? `<a href="/storage/${data.foto_presensi}" target="_blank">
+                        ${
+                            data.foto_presensi
+                                ? `<a href="/storage/${data.foto_presensi}" target="_blank">
                                         <img src="/storage/${data.foto_presensi}" 
                                             class="w-48 rounded border hover:opacity-80 transition">
                                 </a>`
-                    : data.bukti_izin
-                        ? `<a href="/storage/${data.bukti_izin}" target="_blank">
+                                : data.bukti_izin
+                                  ? `<a href="/storage/${data.bukti_izin}" target="_blank">
                                             <img src="/storage/${data.bukti_izin}" 
                                                 class="w-48 rounded border hover:opacity-80 transition">
                                     </a>`
-                        : `<span class="text-sm text-gray-400">
+                                  : `<span class="text-sm text-gray-400">
                                             Tidak ada bukti presensi
                                     </span>`
-                }
+                        }
                     </div>
 
                     <!-- GARIS PEMBATAS -->
@@ -120,7 +125,7 @@
 
                         <!-- TERIMA -->
                         <form method="POST" action="/pembimbing/validasi-presensi/${data.id}/terima">
-                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute("content")}">
                             <button type="submit"
                                 class="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
                                 Terima Presensi
@@ -130,7 +135,7 @@
                         <!-- TOLAK -->
                         <form method="POST" action="/pembimbing/validasi-presensi/${data.id}/tolak" class="space-y-2">
 
-                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute("content")}">
 
                             <textarea name="alasan_penolakan"
                                 rows="2"
@@ -187,12 +192,12 @@
     ============================= */
 
     function renderRekapPresensi(tbody, data) {
-
-        const alasan = data.status_validasi === "ditolak" && data.alasan_penolakan
-            ? `<div class="text-xs text-red-600 mt-1">
+        const alasan =
+            data.status_validasi === "ditolak" && data.alasan_penolakan
+                ? `<div class="text-xs text-red-600 mt-1">
                 Alasan: ${data.alasan_penolakan}
            </div>`
-            : "";
+                : "";
 
         const row = `
         <tr id="presensi-row-${data.id}" class="border-b hover:bg-gray-50">
@@ -206,7 +211,7 @@
             </td>
 
             <td class="px-4 py-3">
-                ${data.nama_perusahaan ?? '-'}
+                ${data.nama_perusahaan ?? "-"}
             </td>
 
             <td class="px-4 py-3">
@@ -229,10 +234,7 @@
     }
 
     function renderMonitoringPresensi(tbody, data) {
-
-        const lat = data.latitude
-            ? parseFloat(data.latitude).toFixed(8)
-            : "-";
+        const lat = data.latitude ? parseFloat(data.latitude).toFixed(8) : "-";
 
         const lng = data.longitude
             ? parseFloat(data.longitude).toFixed(8)
@@ -265,11 +267,12 @@
                  </a>`;
         }
 
-        const alasan = data.status_validasi === "ditolak" && data.alasan_penolakan
-            ? `<div class="text-xs text-red-600 mt-1">
+        const alasan =
+            data.status_validasi === "ditolak" && data.alasan_penolakan
+                ? `<div class="text-xs text-red-600 mt-1">
                 Alasan: ${data.alasan_penolakan}
            </div>`
-            : "";
+                : "";
 
         const row = `
         <tr id="presensi-row-${data.id}" class="hover:bg-gray-50 align-top">
@@ -318,17 +321,15 @@
     }
 
     function renderRiwayatPresensi(tbody, data) {
-
-        const lat = data.latitude
-            ? parseFloat(data.latitude).toFixed(8)
-            : null;
+        const lat = data.latitude ? parseFloat(data.latitude).toFixed(8) : null;
 
         const lng = data.longitude
             ? parseFloat(data.longitude).toFixed(8)
             : null;
 
-        const lokasi = (data.jenis_presensi === "hadir" && data.jarak_meter)
-            ? `
+        const lokasi =
+            data.jenis_presensi === "hadir" && data.jarak_meter
+                ? `
             <div class="text-xs text-gray-800">
                 Jarak: ${parseFloat(data.jarak_meter).toFixed(2)} m
             </div>
@@ -336,17 +337,19 @@
                 ${lat}, ${lng}
             </div>
         `
-            : "-";
+                : "-";
 
-        const waktu = (data.jenis_presensi === "alpha" || !data.waktu_presensi)
-            ? "-"
-            : data.waktu_presensi;
+        const waktu =
+            data.jenis_presensi === "alpha" || !data.waktu_presensi
+                ? "-"
+                : data.waktu_presensi;
 
-        const alasan = data.status_validasi === "ditolak" && data.alasan_penolakan
-            ? `<div class="text-xs text-red-600 mt-1">
+        const alasan =
+            data.status_validasi === "ditolak" && data.alasan_penolakan
+                ? `<div class="text-xs text-red-600 mt-1">
                 Alasan: ${data.alasan_penolakan}
            </div>`
-            : "";
+                : "";
 
         let bukti = "-";
 
@@ -356,8 +359,7 @@
                     class="text-blue-600 hover:underline text-sm">
                     Lihat Foto
                  </a>`;
-        }
-        else if (data.jenis_presensi === "izin" && data.bukti_izin) {
+        } else if (data.jenis_presensi === "izin" && data.bukti_izin) {
             bukti = `<a href="/storage/${data.bukti_izin}"
                     target="_blank"
                     class="text-blue-600 hover:underline text-sm">
@@ -412,7 +414,6 @@
     ============================= */
 
     function jenisBadge(jenis) {
-
         let cls = "bg-gray-100 text-gray-700";
         let label = capitalize(jenis);
 
@@ -425,7 +426,6 @@
     }
 
     function statusBadge(status) {
-
         let cls = "bg-gray-100 text-gray-600";
         let label = capitalize(status);
 
@@ -448,7 +448,6 @@
     }
 
     function buktiLink(data) {
-
         if (data.foto_presensi) {
             return `<a href="/storage/${data.foto_presensi}" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>`;
         }
@@ -471,5 +470,4 @@
             if (el) el.classList.remove("bg-green-50");
         }, 3000);
     }
-
 })();
