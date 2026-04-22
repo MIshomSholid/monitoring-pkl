@@ -5,8 +5,8 @@
     }
 
     const { userId, role } = window.REALTIME_CONFIG || {};
-    const socket = io("https://accomplished-truth.up.railway.app", {
-        transports: ["websocket"],
+    const socket = io(window.REALTIME_URL, {
+        transports: ["polling", "websocket"],
     });
 
     socket.on("connect", function () {

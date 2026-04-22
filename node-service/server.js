@@ -85,6 +85,9 @@ app.post("/broadcast", (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
 server.listen(PORT, () => {
     console.log(`Realtime server running on port ${PORT}`);
 });
