@@ -108,7 +108,7 @@
                             <th class="px-4 py-3 text-left">Nama Siswa</th>
                             <th class="px-4 py-3 text-left">Jenis</th>
                             <th class="px-4 py-3 text-left">Waktu</th>
-                            <th class="px-4 py-3 text-left">Lokasi</th>
+                            <th class="px-4 py-3 text-left">Lokasi Presensi</th>
                             <th class="px-4 py-3 text-left">Status</th>
                             <th class="px-4 py-3 text-left">Bukti</th>
                         </tr>
