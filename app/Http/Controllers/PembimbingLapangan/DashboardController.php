@@ -27,7 +27,13 @@ class DashboardController extends Controller
         }
 
         $penempatanIds = PenempatanPkl::where('pembimbing_lapangan_id', $pembimbing->id)
+            ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->pluck('id');
+
+        if ($penempatanIds->isEmpty()) {
+            abort(403, 'Belum ada siswa PKL yang disetujui.');
+        }
 
         // ======================
         // JUMLAH SISWA PKL
