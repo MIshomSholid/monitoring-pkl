@@ -22,6 +22,7 @@ class PenilaianKPIController extends Controller
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->get();
 
         // 🔑 ambil siswa yang SUDAH DINILAI HARI INI
@@ -62,7 +63,6 @@ class PenilaianKPIController extends Controller
         /* ================= CEK VALIDASI PEMBIMBING LAPANGAN & STATUS AKTIF ================= */
         $valid = PenempatanPkl::where('id', $penempatanId)
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })

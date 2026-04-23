@@ -53,7 +53,8 @@ class ValidasiPresensiController extends Controller
             $q->whereHas('pembimbingLapangan', function ($qq) use ($userId) {
                 $qq->where('user_id', $userId);
             })
-                ->where('status', 'aktif'); 
+                ->where('status', 'aktif')
+                ->where('status_validasi', 'diterima');
         })
             ->orderBy('nama_lengkap')
             ->get();
