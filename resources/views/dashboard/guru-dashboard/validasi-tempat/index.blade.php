@@ -29,9 +29,11 @@
                                 ? 'bg-green-100 text-green-700'
                                 : 'bg-red-100 text-red-700';
 
-                            $pengajuanClass = $item->status_pengajuan == 'aktif'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-red-100 text-red-700';
+                            $pengajuanClass = match ($item->status_pengajuan) {
+                                'aktif' => 'bg-green-100 text-green-700',
+                                'nonaktif' => 'bg-red-100 text-red-700',
+                                default => 'bg-gray-100 text-gray-500',
+                            };
                         @endphp
 
                         <tr class="border-b">
@@ -48,7 +50,7 @@
                             {{-- PENGAJUAN --}}
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 text-xs rounded {{ $pengajuanClass }}">
-                                    {{ ucfirst($item->status_pengajuan) }}
+                                    {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
                                 </span>
                             </td>
 
@@ -195,12 +197,12 @@
                                     <td class="px-4 py-3">{{ $item->tempat->nama_perusahaan }}</td>
 
                                     <td class="px-4 py-3">
-                                        {{ ucfirst($item->status_pengajuan) }}
+                                        {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
                                     </td>
 
                                     <td class="px-4 py-3">
                                         <span class="px-2 py-1 text-xs rounded
-                                            {{ $item->status_validasi == 'diterima'
+                                                                            {{ $item->status_validasi == 'diterima'
                         ? 'bg-green-100 text-green-700'
                         : 'bg-red-100 text-red-700' }}">
                                             {{ ucfirst($item->status_validasi) }}
