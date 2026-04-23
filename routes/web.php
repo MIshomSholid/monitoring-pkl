@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\GuruPembimbingController;
 use App\Http\Controllers\Admin\PembimbingLapanganController;
-use App\Http\Controllers\Admin\InformasiPklController;
+use App\Http\Controllers\Admin\InformasiPKLController;
 use App\Http\Controllers\Admin\TempatPKLController;
 use App\Http\Controllers\Admin\PeriodePklController;
 use App\Http\Controllers\Admin\PenempatanPklController;
@@ -195,22 +195,22 @@ Route::middleware(['auth', 'check.active'])
         Route::delete('/pembimbing-data/{pembimbing}', [PembimbingLapanganController::class, 'destroy'])
             ->name('pembimbing.destroy');
 
-        Route::get('/informasi-pkl', [InformasiPklController::class, 'index'])
+        Route::get('/informasi-pkl', [InformasiPKLController::class, 'index'])
             ->name('informasi-pkl.index');
 
-        Route::get('/informasi-pkl/create', [InformasiPklController::class, 'create'])
+        Route::get('/informasi-pkl/create', [InformasiPKLController::class, 'create'])
             ->name('informasi-pkl.create');
 
-        Route::post('/informasi-pkl', [InformasiPklController::class, 'store'])
+        Route::post('/informasi-pkl', [InformasiPKLController::class, 'store'])
             ->name('informasi-pkl.store');
 
-        Route::get('/informasi-pkl/{informasiPkl}/edit', [InformasiPklController::class, 'edit'])
+        Route::get('/informasi-pkl/{informasiPkl}/edit', [InformasiPKLController::class, 'edit'])
             ->name('informasi-pkl.edit');
 
-        Route::put('/informasi-pkl/{informasiPkl}', [InformasiPklController::class, 'update'])
+        Route::put('/informasi-pkl/{informasiPkl}', [InformasiPKLController::class, 'update'])
             ->name('informasi-pkl.update');
 
-        Route::delete('/informasi-pkl/{informasiPkl}', [InformasiPklController::class, 'destroy'])
+        Route::delete('/informasi-pkl/{informasiPkl}', [InformasiPKLController::class, 'destroy'])
             ->name('informasi-pkl.destroy');
 
         Route::get('/tempat-pkl', [TempatPKLController::class, 'index'])

@@ -7,7 +7,7 @@ use App\Models\InformasiPkl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class InformasiPklController extends Controller
+class InformasiPKLController extends Controller
 {
     /**
      * List informasi PKL
