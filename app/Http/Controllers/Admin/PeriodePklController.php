@@ -110,6 +110,7 @@ class PeriodePklController extends Controller
             'tahun_ajaran' => 'required|regex:/^\d{4}\/\d{4}$/',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'keterangan' => 'nullable|string',
             'is_active' => 'required|boolean',
         ]);
 
