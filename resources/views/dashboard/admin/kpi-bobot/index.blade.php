@@ -95,7 +95,7 @@
                                         <div class="bg-gray-50 border rounded-lg p-4">
 
                                             <p class="font-semibold text-gray-700 mb-3">
-                                                Indikator Penilaian (13 indikator):
+                                                Indikator Penilaian (12 indikator):
                                             </p>
 
                                             <div class="grid md:grid-cols-2 gap-2 text-sm text-gray-700">
