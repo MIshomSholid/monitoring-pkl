@@ -22,6 +22,8 @@ class SiswaBimbinganController extends Controller
             'pembimbingLapangan'
         ])
             ->where('guru_pembimbing_id', $guru->id)
+            ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->get();
 
         return view('dashboard.guru-dashboard.siswa-bimbingan.index', compact('siswaBimbingan'));

@@ -22,6 +22,7 @@ class MonitoringKPIController extends Controller
         $penempatan = PenempatanPkl::with('siswa')
             ->where('guru_pembimbing_id', $guru->id)
             ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->get();
 
         $penempatanId = $request->penempatan_pkl_id;

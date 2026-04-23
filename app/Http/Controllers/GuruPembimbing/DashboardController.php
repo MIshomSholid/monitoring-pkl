@@ -31,6 +31,8 @@ class DashboardController extends Controller
 
         // Ambil semua penempatan siswa yang dibimbing
         $penempatanIds = PenempatanPkl::where('guru_pembimbing_id', $guru->id)
+            ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->pluck('id');
 
         // =====================

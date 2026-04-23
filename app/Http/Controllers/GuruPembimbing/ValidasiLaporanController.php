@@ -47,7 +47,8 @@ class ValidasiLaporanController extends Controller
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = Siswa::whereHas('penempatanPkl', function ($q) use ($guru) {
             $q->where('guru_pembimbing_id', $guru->id)
-                ->where('status', 'aktif');
+                ->where('status', 'aktif')
+                ->where('status_validasi', 'diterima');
         })
             ->orderBy('nama_lengkap')
             ->get();

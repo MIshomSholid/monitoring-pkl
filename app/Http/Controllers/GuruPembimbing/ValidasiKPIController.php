@@ -72,6 +72,7 @@ class ValidasiKPIController extends Controller
         $daftarSiswa = $guru->penempatanPkl()
             ->with('siswa')
             ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->get()
             ->pluck('siswa')
             ->unique('id');

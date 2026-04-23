@@ -21,6 +21,8 @@ class MonitoringPresensiController extends Controller
             ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id);
+                $q->where('status', 'aktif');
+                $q->where('status_validasi', 'diterima');
             })
 
             // FILTER SISWA
@@ -43,6 +45,8 @@ class MonitoringPresensiController extends Controller
         // Dropdown siswa
         $daftarSiswa = Siswa::whereHas('penempatanPkl', function ($q) use ($guru) {
             $q->where('guru_pembimbing_id', $guru->id);
+            $q->where('status', 'aktif');
+            $q->where('status_validasi', 'diterima');
         })
         ->orderBy('nama_lengkap')
         ->get();

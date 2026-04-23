@@ -23,6 +23,7 @@ class ValidasiLaporanAkhirController extends Controller
         ])
         ->where('guru_pembimbing_id', $guru->id)
         ->where('status', 'aktif')
+        ->where('status_validasi', 'diterima')
         ->get();
 
         return view(
@@ -106,6 +107,7 @@ class ValidasiLaporanAkhirController extends Controller
         return PenempatanPkl::where('id', $id)
             ->where('guru_pembimbing_id', Auth::user()->guruPembimbing->id)
             ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->firstOrFail();
     }
 }
