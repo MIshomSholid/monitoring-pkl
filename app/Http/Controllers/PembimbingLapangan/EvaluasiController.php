@@ -20,6 +20,7 @@ class EvaluasiController extends Controller
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
             ->get();
 
         $data = collect();

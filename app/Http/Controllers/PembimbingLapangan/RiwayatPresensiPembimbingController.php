@@ -55,6 +55,7 @@ class RiwayatPresensiPembimbingController extends Controller
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = \App\Models\Siswa::whereHas('penempatanPkl', function ($q) use ($userId) {
             $q->where('status', 'aktif')
+            ->where('status_validasi', 'diterima')
                 ->whereHas('pembimbingLapangan', function ($qq) use ($userId) {
                     $qq->where('user_id', $userId);
                 });
