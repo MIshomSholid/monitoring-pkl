@@ -30,31 +30,36 @@ class ValidasiTempatController extends Controller
     public function validate(Request $request, $id)
     {
         $request->validate([
-            'status_validasi' => 'required|in:menunggu,diterima,ditolak'
+            'status_validasi' => 'required|in:diterima,ditolak'
         ]);
 
         $penempatan = PenempatanPkl::withoutGlobalScope('aktif')->findOrFail($id);
 
-        // 🔥 LOGIKA VALIDASI
+        if (!$penempatan->status_pengajuan) {
+            return back()->with('error', 'Tidak ada pengajuan yang perlu divalidasi.');
+        }
+
+        if ($penempatan->status_validasi === 'diterima') {
+            return back()->with('error', 'Data sudah disetujui dan tidak dapat diubah.');
+        }
+
         if ($request->status_validasi === 'diterima') {
+
             $penempatan->update([
                 'status_validasi' => 'diterima',
-                'status' => $penempatan->status_pengajuan ?? 'aktif',
+                'status' => $penempatan->status_pengajuan ?? $penempatan->status, // ✅ FIX
+                'status_pengajuan' => null,
                 'validated_by' => Auth::id(),
                 'validated_at' => now(),
             ]);
+
         } elseif ($request->status_validasi === 'ditolak') {
+
             $penempatan->update([
                 'status_validasi' => 'ditolak',
+                'status_pengajuan' => null,
                 'validated_by' => Auth::id(),
                 'validated_at' => now(),
-            ]);
-        } else {
-            // kalau balik ke menunggu
-            $penempatan->update([
-                'status_validasi' => 'menunggu',
-                'validated_by' => null,
-                'validated_at' => null,
             ]);
         }
 
