@@ -22,7 +22,7 @@
 
                 <select name="penempatan_pkl_id" class="w-full border rounded px-3 py-2 h-10" required>
 
-                    <option value="">Pilih Siswa PKL</option>
+                    <option value="">Semua Siswa</option>
 
                     @foreach ($penempatanList as $p)
                         <option value="{{ $p->id }}" {{ request('penempatan_pkl_id') == $p->id ? 'selected' : '' }}>

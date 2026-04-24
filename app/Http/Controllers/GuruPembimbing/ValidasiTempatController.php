@@ -21,53 +21,40 @@ class ValidasiTempatController extends Controller
                 'periode'
             ])
             ->where('guru_pembimbing_id', $guru->id)
+            ->latest()
             ->get();
 
-        // ================= MENUNGGU =================
-        $menunggu = $data->where('status_validasi', 'menunggu');
-
-        // ================= AKTIF (SUDAH DISETUJUI) =================
-        $aktif = $data->where('status', 'aktif')
-            ->where('status_validasi', 'diterima');
-
-        // ================= NONAKTIF (SUDAH DISETUJUI) =================
-        $nonaktif = $data
-            ->where('status', 'nonaktif')
-            ->where('status_validasi', 'diterima');
-
-        // ================= RIWAYAT =================
-        $riwayat = $data->whereIn('status_validasi', ['diterima', 'ditolak']);
-
-        return view('dashboard.guru-dashboard.validasi-tempat.index', compact(
-            'menunggu',
-            'aktif',
-            'nonaktif',
-            'riwayat'
-        ));
+        return view('dashboard.guru-dashboard.validasi-tempat.index', compact('data'));
     }
 
     public function validate(Request $request, $id)
     {
         $request->validate([
-            'status_validasi' => 'required|in:diterima,ditolak'
+            'status_validasi' => 'required|in:menunggu,diterima,ditolak'
         ]);
 
         $penempatan = PenempatanPkl::withoutGlobalScope('aktif')->findOrFail($id);
 
-        // LOGIKA UTAMA
+        // 🔥 LOGIKA VALIDASI
         if ($request->status_validasi === 'diterima') {
             $penempatan->update([
                 'status_validasi' => 'diterima',
-                'status' => $penempatan->status_pengajuan ?? 'aktif', // ambil dari pengajuan
+                'status' => $penempatan->status_pengajuan ?? 'aktif',
+                'validated_by' => Auth::id(),
+                'validated_at' => now(),
+            ]);
+        } elseif ($request->status_validasi === 'ditolak') {
+            $penempatan->update([
+                'status_validasi' => 'ditolak',
                 'validated_by' => Auth::id(),
                 'validated_at' => now(),
             ]);
         } else {
+            // kalau balik ke menunggu
             $penempatan->update([
-                'status_validasi' => 'ditolak',
-                // ❗ status tidak berubah
-                'validated_by' => Auth::id(),
-                'validated_at' => now(),
+                'status_validasi' => 'menunggu',
+                'validated_by' => null,
+                'validated_at' => null,
             ]);
         }
 

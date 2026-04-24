@@ -1,225 +1,115 @@
 @extends('dashboard.guru-dashboard.layout')
 
 @section('content')
-    <div class="p-4 sm:p-6 bg-gray-50 min-h-screen">
+<div class="p-6 bg-gray-50 min-h-screen">
 
-        <h1 class="text-xl sm:text-2xl font-bold mb-6">
+    {{-- HEADER --}}
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">
             Validasi Penempatan PKL
         </h1>
-
-        {{-- ================= MENUNGGU ================= --}}
-        <h2 class="text-lg font-semibold mb-4">Pengajuan Menunggu Validasi</h2>
-
-        <div class="bg-white rounded-xl shadow mb-10 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Siswa</th>
-                        <th class="px-4 py-3 text-left">Tempat</th>
-                        <th class="px-4 py-3 text-left">Status Saat Ini</th>
-                        <th class="px-4 py-3 text-left">Pengajuan</th>
-                        <th class="px-4 py-3 text-left">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($menunggu as $item)
-
-                        @php
-                            $statusClass = $item->status == 'aktif'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-red-100 text-red-700';
-
-                            $pengajuanClass = match ($item->status_pengajuan) {
-                                'aktif' => 'bg-green-100 text-green-700',
-                                'nonaktif' => 'bg-red-100 text-red-700',
-                                default => 'bg-gray-100 text-gray-500',
-                            };
-                        @endphp
-
-                        <tr class="border-b">
-                            <td class="px-4 py-3">{{ $item->siswa->nama_lengkap }}</td>
-                            <td class="px-4 py-3">{{ $item->tempat->nama_perusahaan }}</td>
-
-                            {{-- STATUS SEKARANG --}}
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded {{ $statusClass }}">
-                                    {{ ucfirst($item->status) }}
-                                </span>
-                            </td>
-
-                            {{-- PENGAJUAN --}}
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded {{ $pengajuanClass }}">
-                                    {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
-                                </span>
-                            </td>
-
-                            {{-- AKSI --}}
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <form method="POST" action="{{ route('guru.validasi-tempat.validate', $item->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="status_validasi" value="diterima">
-                                        <button class="px-3 py-1 bg-green-600 text-white rounded text-xs">
-                                            Terima
-                                        </button>
-                                    </form>
-
-                                    <form method="POST" action="{{ route('guru.validasi-tempat.validate', $item->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="status_validasi" value="ditolak">
-                                        <button class="px-3 py-1 bg-red-600 text-white rounded text-xs">
-                                            Tolak
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-6 text-gray-500">
-                                Tidak ada pengajuan
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-
-        {{-- ================= DATA AKTIF ================= --}}
-        <h2 class="text-lg font-semibold mb-4">Data Aktif (Sudah Disetujui)</h2>
-
-        <div class="bg-white rounded-xl shadow mb-10 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Siswa</th>
-                        <th class="px-4 py-3 text-left">Tempat</th>
-                        <th class="px-4 py-3 text-left">Status</th>
-                        <th class="px-4 py-3 text-left">Validasi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($aktif as $item)
-
-                        <tr class="border-b">
-                            <td class="px-4 py-3">{{ $item->siswa->nama_lengkap }}</td>
-                            <td class="px-4 py-3">{{ $item->tempat->nama_perusahaan }}</td>
-
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-                                    Aktif
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-                                    Disetujui
-                                </span>
-                            </td>
-                        </tr>
-
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-500">
-                                Tidak ada data aktif
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        {{-- ================= DATA NONAKTIF ================= --}}
-        <h2 class="text-lg font-semibold mb-4">Data Nonaktif (Sudah Disetujui)</h2>
-
-        <div class="bg-white rounded-xl shadow mb-10 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Siswa</th>
-                        <th class="px-4 py-3 text-left">Tempat</th>
-                        <th class="px-4 py-3 text-left">Status</th>
-                        <th class="px-4 py-3 text-left">Validasi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($nonaktif as $item)
-
-                        <tr class="border-b">
-                            <td class="px-4 py-3">{{ $item->siswa->nama_lengkap }}</td>
-                            <td class="px-4 py-3">{{ $item->tempat->nama_perusahaan }}</td>
-
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
-                                    Nonaktif
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-                                    Disetujui
-                                </span>
-                            </td>
-                        </tr>
-
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-500">
-                                Tidak ada data nonaktif
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        {{-- ================= RIWAYAT ================= --}}
-        <h2 class="text-lg font-semibold mb-4">Riwayat Validasi</h2>
-
-        <div class="bg-white rounded-xl shadow overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Siswa</th>
-                        <th class="px-4 py-3 text-left">Tempat</th>
-                        <th class="px-4 py-3 text-left">Pengajuan</th>
-                        <th class="px-4 py-3 text-left">Hasil</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($riwayat as $item)
-
-                                <tr class="border-b">
-                                    <td class="px-4 py-3">{{ $item->siswa->nama_lengkap }}</td>
-                                    <td class="px-4 py-3">{{ $item->tempat->nama_perusahaan }}</td>
-
-                                    <td class="px-4 py-3">
-                                        {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
-                                    </td>
-
-                                    <td class="px-4 py-3">
-                                        <span class="px-2 py-1 text-xs rounded
-                                                                            {{ $item->status_validasi == 'diterima'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700' }}">
-                                            {{ ucfirst($item->status_validasi) }}
-                                        </span>
-                                    </td>
-                                </tr>
-
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-500">
-                                Belum ada riwayat
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
+        <p class="text-sm text-gray-600 mt-1">
+            Validasi pengajuan penempatan siswa sebelum digunakan dalam sistem.
+        </p>
     </div>
+
+    <div class="bg-white rounded-xl shadow overflow-x-auto">
+        <table class="min-w-full text-sm text-gray-700">
+            <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="px-4 py-3">Siswa</th>
+                    <th class="px-4 py-3">Tempat</th>
+                    <th class="px-4 py-3 text-center">Status Saat Ini</th>
+                    <th class="px-4 py-3 text-center">Pengajuan</th>
+                    <th class="px-4 py-3 text-center">Status Validasi</th>
+                    <th class="px-4 py-3 text-center">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse($data as $item)
+
+                    @php
+                        $statusClass = $item->status == 'aktif'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700';
+
+                        $pengajuanClass = match ($item->status_pengajuan) {
+                            'aktif' => 'bg-green-100 text-green-700',
+                            'nonaktif' => 'bg-red-100 text-red-700',
+                            default => 'bg-gray-100 text-gray-500',
+                        };
+
+                        $validasiClass = match ($item->status_validasi) {
+                            'diterima' => 'bg-green-100 text-green-700',
+                            'ditolak' => 'bg-red-100 text-red-700',
+                            default => 'bg-yellow-100 text-yellow-700',
+                        };
+                    @endphp
+
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-medium">
+                            {{ $item->siswa->nama_lengkap }}
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ $item->tempat->nama_perusahaan }}
+                        </td>
+
+                        {{-- STATUS SAAT INI --}}
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-3 py-1 text-xs rounded {{ $statusClass }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </td>
+
+                        {{-- PENGAJUAN --}}
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-3 py-1 text-xs rounded {{ $pengajuanClass }}">
+                                {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
+                            </span>
+                        </td>
+
+                        {{-- STATUS VALIDASI --}}
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-3 py-1 text-xs rounded {{ $validasiClass }}">
+                                {{ ucfirst($item->status_validasi ?? 'menunggu') }}
+                            </span>
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="px-4 py-3">
+                            <form method="POST"
+                                  action="{{ route('guru.validasi-tempat.validate', $item->id) }}">
+                                @csrf
+
+                                <select name="status_validasi"
+                                    class="border rounded px-2 py-1 text-xs mb-2 w-full">
+
+                                    <option value="menunggu">Menunggu</option>
+                                    <option value="diterima">Setujui</option>
+                                    <option value="ditolak">Tolak</option>
+
+                                </select>
+
+                                <button
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded">
+                                    Simpan
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center px-4 py-6 text-gray-500">
+                            Tidak ada data
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+</div>
 @endsection

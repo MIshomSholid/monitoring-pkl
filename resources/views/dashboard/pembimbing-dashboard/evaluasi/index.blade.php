@@ -19,7 +19,7 @@
         <label class="font-medium">Siswa PKL</label>
         <select name="penempatan_pkl_id"
                 class="w-full border rounded px-3 py-2" required>
-            <option value="">-- Pilih Siswa --</option>
+            <option value="">Pilih Siswa</option>
             @foreach ($penempatanList as $p)
                 <option value="{{ $p->id }}">
                     {{ $p->siswa->nama_lengkap }} — {{ $p->tempat->nama_perusahaan }}
