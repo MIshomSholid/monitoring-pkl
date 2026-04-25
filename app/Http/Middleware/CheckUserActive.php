@@ -41,7 +41,6 @@ class CheckUserActive
 
                 $hasActiveSiswa = PenempatanPkl::where('pembimbing_lapangan_id', $pembimbingId)
                     ->where('status', 'aktif')
-                    ->where('status_validasi', 'diterima')
                     ->exists();
 
                 if (!$hasActiveSiswa) {
