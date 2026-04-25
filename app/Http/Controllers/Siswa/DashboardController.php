@@ -56,7 +56,6 @@ class DashboardController extends Controller
         ])
             ->where('siswa_id', $siswaId)
             ->where('status', 'aktif') 
-            ->where('status_validasi', 'diterima')
             ->first();
 
         if (!$penempatan) {
