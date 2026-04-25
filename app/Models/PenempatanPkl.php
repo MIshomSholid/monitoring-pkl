@@ -16,7 +16,6 @@ class PenempatanPkl extends Model
         'periode_pkl_id',
         'guru_pembimbing_id',
         'pembimbing_lapangan_id',
-        'status',
         'status_pengajuan',
         'tanggal_mulai',
         'tanggal_selesai',

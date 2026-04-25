@@ -69,7 +69,8 @@ class PenempatanPklController extends Controller
      */
     public function create()
     {
-        $siswaTerpakai = PenempatanPkl::where('status', 'aktif')
+        $siswaTerpakai = PenempatanPkl::withoutGlobalScope('aktif')
+            ->where('status', 'aktif')
             ->pluck('siswa_id');
 
         return view('dashboard.admin.penempatan.create', [
@@ -213,7 +214,7 @@ class PenempatanPklController extends Controller
             'tempat_pkl_id' => 'required|exists:tempat_pkl,id',
             'guru_pembimbing_id' => 'required|exists:guru_pembimbing,id',
             'pembimbing_lapangan_id' => 'required|exists:pembimbing_lapangan,id',
-            'status' => 'required|in:aktif,nonaktif',
+            'status' => 'nullable|in:aktif,nonaktif',
 
             'tanggal_mulai' => 'nullable|date',
             'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
@@ -234,7 +235,6 @@ class PenempatanPklController extends Controller
             ])->withInput();
         }
 
-        // 🔥 DATA UTAMA (TANPA STATUS)
         $data = [
             'siswa_id' => $request->siswa_id,
             'tempat_pkl_id' => $request->tempat_pkl_id,
@@ -251,14 +251,17 @@ class PenempatanPklController extends Controller
             $data['tanggal_selesai'] = $request->tanggal_selesai;
         }
 
-        // 🔥 SIMPAN KE STATUS_PENGAJUAN (BUKAN STATUS)
-        $data['status_pengajuan'] = $request->status;
+        $statusBaru = $request->input('status');
 
-        // 🔥 RESET VALIDASI
-        $data['status_validasi'] = 'menunggu';
-        $data['catatan_validasi'] = null;
-        $data['validated_by'] = null;
-        $data['validated_at'] = null;
+        if ($statusBaru !== null && $statusBaru !== $penempatan->status) {
+            $data['status_pengajuan'] = $statusBaru;
+
+            // RESET VALIDASI HANYA JIKA ADA PERUBAHAN STATUS
+            $data['status_validasi'] = 'menunggu';
+            $data['catatan_validasi'] = null;
+            $data['validated_by'] = null;
+            $data['validated_at'] = null;
+        }
 
         $penempatan->update($data);
 
@@ -277,7 +280,9 @@ class PenempatanPklController extends Controller
             'status' => 'required|in:aktif,nonaktif',
         ]);
 
-        $updated = PenempatanPkl::where('periode_pkl_id', $request->periode_id)
+        $updated = PenempatanPkl::withoutGlobalScope('aktif')
+            ->where('periode_pkl_id', $request->periode_id)
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->update([
                 'status_pengajuan' => $request->status,
                 'status_validasi' => 'menunggu',
