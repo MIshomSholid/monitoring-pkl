@@ -65,11 +65,17 @@ class AuthenticatedSessionController extends Controller
         // SISWA
         if ($user->role === 'siswa') {
 
-            $penempatan = PenempatanPkl::where('siswa_id', $user->siswa->id)
+            if (!$user->siswa) {
+                abort(403, 'Data siswa tidak ditemukan.');
+            }
+
+            $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+                ->where('siswa_id', $user->siswa->id)
+                ->where('status', 'aktif')
                 ->first();
 
             if (!$penempatan) {
-                abort(403, 'Penempatan PKL belum divalidasi oleh Guru Pembimbing.');
+                abort(403, 'Penempatan PKL belum aktif atau belum divalidasi.');
             }
         }
 
