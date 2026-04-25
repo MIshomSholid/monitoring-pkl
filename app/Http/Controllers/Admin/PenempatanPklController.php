@@ -107,12 +107,12 @@ class PenempatanPklController extends Controller
             'guru_pembimbing_id' => 'required|exists:guru_pembimbing,id',
             'pembimbing_lapangan_id' => 'required|exists:pembimbing_lapangan,id',
 
-            // 🔥 TAMBAHAN MASA PKL
+            // TAMBAHAN MASA PKL
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
         ]);
 
-        // 🔥 CEK KUOTA TEMPAT PKL
+        // CEK KUOTA TEMPAT PKL
         $tempat = TempatPkl::findOrFail($request->tempat_pkl_id);
 
         $totalSiswa = PenempatanPkl::withoutGlobalScope('aktif')
@@ -150,7 +150,8 @@ class PenempatanPklController extends Controller
                     'pembimbing_lapangan_id' => $request->pembimbing_lapangan_id,
                     'tanggal_mulai' => $request->tanggal_mulai,
                     'tanggal_selesai' => $request->tanggal_selesai,
-                    'status' => 'aktif',
+                    'status' => 'nonaktif',
+                    'status_pengajuan' => 'aktif',
                     'status_validasi' => 'menunggu',
                 ]);
 
