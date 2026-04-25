@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -17,7 +16,7 @@ class UserController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('username', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -40,17 +39,17 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users,username',
-            'email'    => 'required|email|unique:users,email',
-            'role'     => 'required|in:admin,siswa,guru_pembimbing,pembimbing_lapangan',
-            'password' => 'required|min:6',
+            'username' => 'required|string|max:50|unique:users,username',
+            'email' => 'required|string|email|max:100|unique:users,email',
+            'role' => 'required|in:admin,siswa,guru_pembimbing,pembimbing_lapangan',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         User::create([
-            'username'  => $request->username,
-            'email'     => $request->email,
-            'role'      => $request->role,
-            'password'  => Hash::make($request->password),
+            'username' => $request->username,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => $request->password,
             'is_active' => true,
         ]);
 
@@ -69,18 +68,25 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'username'  => 'required|unique:users,username,' . $user->id,
-            'email'     => 'required|email|unique:users,email,' . $user->id,
-            'role'      => 'required|in:admin,siswa,guru_pembimbing,pembimbing_lapangan',
+            'username' => 'required|string|max:50|unique:users,username,' . $user->id,
+            'email' => 'required|string|email|max:100|unique:users,email,' . $user->id,
+            'role' => 'required|in:admin,siswa,guru_pembimbing,pembimbing_lapangan',
             'is_active' => 'required|boolean',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user->update([
-            'username'  => $request->username,
-            'email'     => $request->email,
-            'role'      => $request->role,
+        $data = [
+            'username' => $request->username,
+            'email' => $request->email,
+            'role' => $request->role,
             'is_active' => (bool) $request->is_active,
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = ($request->password);
+        }
+
+        $user->update($data);
 
         return redirect()
             ->route('admin.users.index')
