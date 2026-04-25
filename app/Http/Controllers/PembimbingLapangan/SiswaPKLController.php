@@ -12,7 +12,8 @@ class SiswaPKLController extends Controller
     {
         $userId = Auth::id();
 
-        $data = PenempatanPkl::with([
+        $data = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with([
                 'siswa',
                 'periodePkl',
                 'guruPembimbing'
@@ -21,7 +22,7 @@ class SiswaPKLController extends Controller
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->orderBy('created_at', 'desc')
             ->get();
 
