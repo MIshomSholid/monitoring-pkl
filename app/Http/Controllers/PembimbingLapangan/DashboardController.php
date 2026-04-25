@@ -26,7 +26,8 @@ class DashboardController extends Controller
             ]);
         }
 
-        $penempatanIds = PenempatanPkl::where('pembimbing_lapangan_id', $pembimbing->id)
+        $penempatanIds = PenempatanPkl::withoutGlobalScope('aktif')
+            ->where('pembimbing_lapangan_id', $pembimbing->id)
             ->where('status', 'aktif')
             ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->pluck('id');
