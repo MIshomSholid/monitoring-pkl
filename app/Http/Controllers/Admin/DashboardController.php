@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         $totalSiswa = PenempatanPkl::distinct('siswa_id')->count('siswa_id');
         $totalTempat = TempatPkl::count();
-        $periodeAktif = PeriodePkl::aktif();
+        $periodeAktif = PeriodePkl::getAktif();
         $penempatanAktif = PenempatanPkl::where('status', 'aktif')->count();
 
         // =========================
