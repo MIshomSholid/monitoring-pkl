@@ -14,24 +14,36 @@ class EvaluasiController extends Controller
     {
         $userId = Auth::id();
 
-        // siswa bimbingan
-        $penempatanList = PenempatanPkl::with(['siswa', 'tempat'])
+        $penempatanList = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with(['siswa', 'tempat'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $data = collect();
 
         if ($request->filled('penempatan_pkl_id')) {
-            $data = CatatanEvaluasi::with(['penempatan.siswa', 'penempatan.tempat'])
-                ->where('penempatan_pkl_id', $request->penempatan_pkl_id)
-                ->where('kategori', 'pembimbing_lapangan')
-                ->orderBy('tanggal', 'desc')
-                ->paginate(10)
-                ->withQueryString();
+
+            $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+                ->where('id', $request->penempatan_pkl_id)
+                ->where('status', 'aktif')
+                ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })
+                ->first();
+
+            if ($penempatan) {
+                $data = CatatanEvaluasi::with(['penempatan.siswa', 'penempatan.tempat'])
+                    ->where('penempatan_pkl_id', $penempatan->id)
+                    ->where('kategori', 'pembimbing_lapangan')
+                    ->orderBy('tanggal', 'desc')
+                    ->paginate(10)
+                    ->withQueryString();
+            }
         }
 
         return view(
@@ -47,8 +59,16 @@ class EvaluasiController extends Controller
             'catatan'           => 'required|string',
         ]);
 
+        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+            ->where('id', $request->penempatan_pkl_id)
+            ->where('status', 'aktif')
+            ->whereHas('pembimbingLapangan', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->firstOrFail();
+
         CatatanEvaluasi::create([
-            'penempatan_pkl_id' => $request->penempatan_pkl_id,
+            'penempatan_pkl_id' => $penempatan->id,
             'kategori'          => 'pembimbing_lapangan',
             'catatan'           => $request->catatan,
             'tanggal'           => now()->toDateString(),

@@ -24,8 +24,12 @@ class ValidasiPresensiController extends Controller
         ])
             ->where('status_validasi', 'menunggu')
             ->where('jenis_presensi', '!=', 'alpha')
-            ->whereHas('penempatanPkl.pembimbingLapangan', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
+            ->whereHas('penempatanPkl', function ($q) use ($userId) {
+                $q->where('status', 'aktif')
+                    ->where('status_validasi', 'diterima')
+                    ->whereHas('pembimbingLapangan', function ($qq) use ($userId) {
+                        $qq->where('user_id', $userId);
+                    });
             });
 
         /* ================= FILTER SISWA (DROPDOWN) ================= */
@@ -50,11 +54,11 @@ class ValidasiPresensiController extends Controller
 
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = \App\Models\Siswa::whereHas('penempatanPkl', function ($q) use ($userId) {
-            $q->whereHas('pembimbingLapangan', function ($qq) use ($userId) {
-                $qq->where('user_id', $userId);
-            })
-                ->where('status', 'aktif')
-                ->where('status_validasi', 'diterima');
+            $q->where('status', 'aktif')
+                ->where('status_validasi', 'diterima')
+                ->whereHas('pembimbingLapangan', function ($qq) use ($userId) {
+                    $qq->where('user_id', $userId);
+                });
         })
             ->orderBy('nama_lengkap')
             ->get();
@@ -72,6 +76,14 @@ class ValidasiPresensiController extends Controller
     {
         if ($presensi->jenis_presensi === 'alpha') {
             abort(403, 'Presensi alpha tidak dapat divalidasi.');
+        }
+
+        if ($presensi->penempatanPkl->pembimbingLapangan->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        if ($presensi->penempatanPkl->status !== 'aktif') {
+            return back()->with('error', 'PKL sudah tidak aktif.');
         }
 
         $presensi->update([
@@ -102,6 +114,10 @@ class ValidasiPresensiController extends Controller
     {
         if ($presensi->jenis_presensi === 'alpha') {
             abort(403, 'Presensi alpha tidak dapat divalidasi.');
+        }
+
+        if ($presensi->penempatanPkl->pembimbingLapangan->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak.');
         }
 
         $request->validate([

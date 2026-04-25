@@ -14,13 +14,14 @@ class RiwayatKPIController extends Controller
     {
         $userId = Auth::id();
 
-        // daftar siswa yang dibimbing (dropdown)
-        $penempatanList = PenempatanPkl::with(['siswa', 'tempatPkl'])
+        $penempatanList = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with(['siswa', 'tempatPkl'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $data = collect();
@@ -31,34 +32,44 @@ class RiwayatKPIController extends Controller
 
         if ($request->filled('penempatan_pkl_id')) {
 
-            // ambil semua tanggal KPI
-            $tanggalList = PenilaianKpi::where('input_by', $userId)
-                ->where('penempatan_pkl_id', $request->penempatan_pkl_id)
-                ->selectRaw('DATE(periode_penilaian) as tanggal')
-                ->distinct()
-                ->orderBy('tanggal', 'desc')
-                ->pluck('tanggal');
+            $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+                ->where('id', $request->penempatan_pkl_id)
+                ->where('status', 'aktif')
+                ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })
+                ->first();
 
-            if ($tanggalList->count()) {
+            if ($penempatan) {
 
-                // tentukan tanggal aktif
-                $tanggalAktif = $request->tanggal ?? $tanggalList->first();
+                // ambil semua tanggal KPI
+                $tanggalList = PenilaianKpi::where('input_by', $userId)
+                    ->where('penempatan_pkl_id', $penempatan->id)
+                    ->selectRaw('DATE(periode_penilaian) as tanggal')
+                    ->distinct()
+                    ->orderBy('tanggal', 'desc')
+                    ->pluck('tanggal');
 
-                $index = $tanggalList->search($tanggalAktif);
+                if ($tanggalList->count()) {
 
-                $prev = $tanggalList[$index + 1] ?? null;
-                $next = $tanggalList[$index - 1] ?? null;
+                    $tanggalAktif = $request->tanggal ?? $tanggalList->first();
 
-                // ambil KPI tanggal tersebut
-                $data = PenilaianKpi::with([
-                    'penempatanPkl.siswa',
-                    'penempatanPkl.tempatPkl',
-                    'indikator.kategori'
-                ])
-                    ->where('input_by', $userId)
-                    ->where('penempatan_pkl_id', $request->penempatan_pkl_id)
-                    ->whereDate('periode_penilaian', $tanggalAktif)
-                    ->get();
+                    $index = $tanggalList->search($tanggalAktif);
+
+                    $prev = $tanggalList[$index + 1] ?? null;
+                    $next = $tanggalList[$index - 1] ?? null;
+
+                    // ambil KPI
+                    $data = PenilaianKpi::with([
+                        'penempatanPkl.siswa',
+                        'penempatanPkl.tempatPkl',
+                        'indikator.kategori'
+                    ])
+                        ->where('input_by', $userId)
+                        ->where('penempatan_pkl_id', $penempatan->id)
+                        ->whereDate('periode_penilaian', $tanggalAktif)
+                        ->get();
+                }
             }
         }
 

@@ -17,15 +17,16 @@ class PenilaianKPIController extends Controller
         $tanggal = now()->toDateString();
 
         // Semua siswa bimbingan
-        $penempatan = PenempatanPkl::with(['siswa', 'tempat'])
+        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with(['siswa', 'tempat'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->get();
 
-        // 🔑 ambil siswa yang SUDAH DINILAI HARI INI
+        // ambil siswa yang SUDAH DINILAI HARI INI
         $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $tanggal)
             ->whereIn(
                 'penempatan_pkl_id',
