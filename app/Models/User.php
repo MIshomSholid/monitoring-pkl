@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-// IMPORT MODEL RELASI
 use App\Models\Siswa;
 use App\Models\GuruPembimbing;
 use App\Models\PembimbingLapangan;

@@ -16,14 +16,17 @@ class MonitoringPresensiController extends Controller
         $guru = GuruPembimbing::where('user_id', Auth::id())->firstOrFail();
 
         $query = Presensi::with([
-                'penempatanPkl.siswa',
-                'penempatanPkl.tempatPkl'
-            ])
+            'penempatanPkl.siswa',
+            'penempatanPkl.tempatPkl'
+        ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id);
                 $q->where('status', 'aktif');
                 $q->where('status_validasi', 'diterima');
             })
+
+            //FILTER AKUN SISWA YANG NON-AKTIF
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
 
             // FILTER SISWA
             ->when($request->filled('siswa_id'), function ($q) use ($request) {
@@ -44,18 +47,18 @@ class MonitoringPresensiController extends Controller
 
         // Dropdown siswa
         $daftarSiswa = Siswa::whereHas('penempatanPkl', function ($q) use ($guru) {
-            $q->where('guru_pembimbing_id', $guru->id);
-            $q->where('status', 'aktif');
-            $q->where('status_validasi', 'diterima');
+            $q->where('guru_pembimbing_id', $guru->id)
+                ->where('status_validasi', 'diterima');
         })
-        ->orderBy('nama_lengkap')
-        ->get();
+            ->whereHas('user', fn($q) => $q->active())
+            ->orderBy('nama_lengkap')
+            ->get();
 
         return view(
             'dashboard.guru-dashboard.monitoring-presensi.index',
             [
-                'presensi'     => $presensi,
-                'daftarSiswa'  => $daftarSiswa,
+                'presensi' => $presensi,
+                'daftarSiswa' => $daftarSiswa,
             ]
         );
     }

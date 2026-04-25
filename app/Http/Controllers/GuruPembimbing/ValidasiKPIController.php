@@ -19,7 +19,8 @@ class ValidasiKPIController extends Controller
             'indikator.kategori'
         ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
-                $q->where('guru_pembimbing_id', $guru->id);
+                $q->where('guru_pembimbing_id', $guru->id)
+                    ->whereHas('siswa.user', fn($qq) => $qq->active());
             });
 
         /* ================= FILTER SISWA ================= */
@@ -39,7 +40,7 @@ class ValidasiKPIController extends Controller
 
         /* ================= TANGGAL AKTIF ================= */
         $tanggalAktif = $request->tanggal ?? $tanggalList->first();
-        
+
         if (!$tanggalAktif) {
             $data = collect();
         } else {
@@ -71,8 +72,8 @@ class ValidasiKPIController extends Controller
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = $guru->penempatanPkl()
             ->with('siswa')
-            ->where('status', 'aktif')
             ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->active())
             ->get()
             ->pluck('siswa')
             ->unique('id');
@@ -95,7 +96,11 @@ class ValidasiKPIController extends Controller
             'status' => 'required|in:diterima,ditolak',
         ]);
 
-        PenilaianKpi::where('penempatan_pkl_id', $penempatanPklId)
+        PenilaianKpi::whereHas('penempatanPkl', function ($q) use ($penempatanPklId) {
+            $q->where('id', $penempatanPklId)
+                ->where('guru_pembimbing_id', Auth::id())
+                ->whereHas('siswa.user', fn($qq) => $qq->active());
+        })
             ->whereDate('periode_penilaian', $tanggal)
             ->update([
                 'status_validasi' => $request->status,

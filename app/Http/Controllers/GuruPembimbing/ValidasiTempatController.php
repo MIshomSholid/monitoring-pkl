@@ -21,6 +21,7 @@ class ValidasiTempatController extends Controller
                 'periode'
             ])
             ->where('guru_pembimbing_id', $guru->id)
+            ->whereHas('siswa.user', fn($q) => $q->active())
             ->latest()
             ->get();
 
@@ -33,7 +34,11 @@ class ValidasiTempatController extends Controller
             'status_validasi' => 'required|in:diterima,ditolak'
         ]);
 
-        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')->findOrFail($id);
+        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+            ->where('id', $id)
+            ->where('guru_pembimbing_id', Auth::user()->guruPembimbing->id)
+            ->whereHas('siswa.user', fn($q) => $q->active())
+            ->firstOrFail();
 
         if (!$penempatan->status_pengajuan) {
             return back()->with('error', 'Tidak ada pengajuan yang perlu divalidasi.');

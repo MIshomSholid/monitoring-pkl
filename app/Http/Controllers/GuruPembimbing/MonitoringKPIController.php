@@ -21,7 +21,7 @@ class MonitoringKPIController extends Controller
 
         $penempatan = PenempatanPkl::with('siswa')
             ->where('guru_pembimbing_id', $guru->id)
-            ->where('status', 'aktif')
+            ->whereHas('siswa.user', fn($q) => $q->active())
             ->where('status_validasi', 'diterima')
             ->get();
 
@@ -52,6 +52,7 @@ class MonitoringKPIController extends Controller
             $penempatanModel = PenempatanPkl::with('tempatPkl', 'siswa')
                 ->where('id', $penempatanId)
                 ->where('guru_pembimbing_id', $guru->id)
+                ->whereHas('siswa.user', fn($q) => $q->active())
                 ->first();
 
             if (!$penempatanModel) {
@@ -60,11 +61,13 @@ class MonitoringKPIController extends Controller
 
             $semuaKpi = PenilaianKpi::with('indikator.kategori')
                 ->where('penempatan_pkl_id', $penempatanId)
+                ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
                 ->where('status_validasi', 'diterima')
                 ->get();
 
             // ambil KPI terbaru untuk tabel
             $tanggalList = PenilaianKpi::where('penempatan_pkl_id', $penempatanId)
+                ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
                 ->where('status_validasi', 'diterima')
                 ->selectRaw('DATE(periode_penilaian) as tanggal')
                 ->distinct()
@@ -85,6 +88,7 @@ class MonitoringKPIController extends Controller
 
             if ($tanggalAktif) {
                 $kpi = PenilaianKpi::with('indikator.kategori')
+                    ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
                     ->where('penempatan_pkl_id', $penempatanId)
                     ->whereDate('periode_penilaian', $tanggalAktif)
                     ->where('status_validasi', 'diterima')
@@ -204,6 +208,7 @@ class MonitoringKPIController extends Controller
 
         return PenilaianKpi::with('indikator.kategori')
             ->where('penempatan_pkl_id', $penempatanId)
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
             ->whereDate('periode_penilaian', $tanggal)
             ->where('status_validasi', 'diterima')
             ->get();
@@ -290,6 +295,7 @@ class MonitoringKPIController extends Controller
         }
 
         $presensi = Presensi::where('penempatan_pkl_id', $penempatan->id)
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
             ->whereBetween('tanggal', [$tanggalMulai, $batasAkhir])
             ->get()
             ->keyBy(fn($p) => Carbon::parse($p->tanggal)->toDateString());
@@ -340,9 +346,12 @@ class MonitoringKPIController extends Controller
 
     private function hitungLaporan($penempatanId)
     {
-        $total = LaporanKegiatan::where('penempatan_pkl_id', $penempatanId)->count();
+        $total = LaporanKegiatan::where('penempatan_pkl_id', $penempatanId)
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
+            ->count();
 
         $valid = LaporanKegiatan::where('penempatan_pkl_id', $penempatanId)
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
             ->where('status_validasi', 'diterima')
             ->count();
 

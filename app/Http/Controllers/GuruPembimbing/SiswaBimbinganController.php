@@ -24,6 +24,7 @@ class SiswaBimbinganController extends Controller
             ->where('guru_pembimbing_id', $guru->id)
             ->where('status', 'aktif')
             ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->active())
             ->get();
 
         return view('dashboard.guru-dashboard.siswa-bimbingan.index', compact('siswaBimbingan'));
@@ -40,7 +41,8 @@ class SiswaBimbinganController extends Controller
             'pembimbingLapangan'
         ])
             ->where('id', $penempatanId)
-            ->where('guru_pembimbing_id', $guru->id) // 🔐 pembatasan akses
+            ->where('guru_pembimbing_id', $guru->id)
+            ->whereHas('siswa.user', fn($q) => $q->active())
             ->firstOrFail();
 
         return view('dashboard.guru-dashboard.siswa-bimbingan.show', compact('penempatan'));
