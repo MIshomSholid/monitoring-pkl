@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         $penempatanIds = PenempatanPkl::where('pembimbing_lapangan_id', $pembimbing->id)
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->pluck('id');
 
         if ($penempatanIds->isEmpty()) {
