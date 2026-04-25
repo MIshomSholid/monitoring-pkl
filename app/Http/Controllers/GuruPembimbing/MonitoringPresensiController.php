@@ -20,13 +20,11 @@ class MonitoringPresensiController extends Controller
             'penempatanPkl.tempatPkl'
         ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
-                $q->where('guru_pembimbing_id', $guru->id);
-                $q->where('status', 'aktif');
-                $q->where('status_validasi', 'diterima');
+                $q->where('guru_pembimbing_id', $guru->id)
+                    ->where('status', 'aktif');
             })
 
-            //FILTER AKUN SISWA YANG NON-AKTIF
-            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->active())
+            ->whereHas('penempatanPkl.siswa.user', fn($q) => $q->where('is_active', 1))
 
             // FILTER SISWA
             ->when($request->filled('siswa_id'), function ($q) use ($request) {

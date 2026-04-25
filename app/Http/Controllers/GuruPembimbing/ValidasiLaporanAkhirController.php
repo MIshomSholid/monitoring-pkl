@@ -15,16 +15,17 @@ class ValidasiLaporanAkhirController extends Controller
     {
         $guru = Auth::user()->guruPembimbing;
 
-        $penempatan = PenempatanPkl::with([
-            'siswa',
-            'tempatPkl',
-            'periodePkl',
-            'laporanAkhir'
-        ])
-        ->where('guru_pembimbing_id', $guru->id)
-        ->where('status_validasi', 'diterima')
-        ->whereHas('siswa.user', fn($q) => $q->active())
-        ->get();
+        $penempatan = PenempatanPkl::withoutGlobalScope('aktif') // 
+            ->with([
+                'siswa',
+                'tempatPkl',
+                'periodePkl',
+                'laporanAkhir'
+            ])
+            ->where('guru_pembimbing_id', $guru->id)
+            ->where('status', 'aktif') 
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
+            ->get();
 
         return view(
             'dashboard.guru-dashboard.validasi-laporan-akhir.index',
@@ -104,10 +105,11 @@ class ValidasiLaporanAkhirController extends Controller
 
     private function getPenempatanByGuru($id)
     {
-        return PenempatanPkl::where('id', $id)
+        return PenempatanPkl::withoutGlobalScope('aktif') 
+            ->where('id', $id)
             ->where('guru_pembimbing_id', Auth::user()->guruPembimbing->id)
-            ->where('status_validasi', 'diterima')
-            ->whereHas('siswa.user', fn($q) => $q->active())
+            ->where('status', 'aktif') 
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->firstOrFail();
     }
 }

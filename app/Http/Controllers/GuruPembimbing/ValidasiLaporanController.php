@@ -21,7 +21,8 @@ class ValidasiLaporanController extends Controller
         ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id)
-                ->whereHas('siswa.user', fn($qq) => $qq->active());
+                  ->where('status', 'aktif') 
+                  ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
             });
 
         /* ================= FILTER SISWA ================= */
@@ -47,10 +48,11 @@ class ValidasiLaporanController extends Controller
 
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = Siswa::whereHas('penempatanPkl', function ($q) use ($guru) {
-            $q->where('guru_pembimbing_id', $guru->id)
-                ->where('status_validasi', 'diterima')
-                ->whereHas('siswa.user', fn($qq) => $qq->active());
-        })
+                $q->where('guru_pembimbing_id', $guru->id)
+                  ->where('status', 'aktif')
+                  ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
+            })
+            ->whereHas('user', fn($q) => $q->where('is_active', 1)) 
             ->orderBy('nama_lengkap')
             ->get();
 

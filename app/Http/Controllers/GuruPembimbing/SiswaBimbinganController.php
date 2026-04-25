@@ -15,16 +15,16 @@ class SiswaBimbinganController extends Controller
         $guru = GuruPembimbing::where('user_id', Auth::id())->firstOrFail();
 
         // Ambil siswa yang dibimbing guru tersebut
-        $siswaBimbingan = PenempatanPkl::with([
-            'siswa',
-            'tempat',
-            'periode',
-            'pembimbingLapangan'
-        ])
+        $siswaBimbingan = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with([
+                'siswa',
+                'tempat',
+                'periode',
+                'pembimbingLapangan'
+            ])
             ->where('guru_pembimbing_id', $guru->id)
             ->where('status', 'aktif')
-            ->where('status_validasi', 'diterima')
-            ->whereHas('siswa.user', fn($q) => $q->active())
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->get();
 
         return view('dashboard.guru-dashboard.siswa-bimbingan.index', compact('siswaBimbingan'));
@@ -34,15 +34,16 @@ class SiswaBimbinganController extends Controller
     {
         $guru = GuruPembimbing::where('user_id', auth()->id())->firstOrFail();
 
-        $penempatan = PenempatanPkl::with([
-            'siswa',
-            'tempat',
-            'periode',
-            'pembimbingLapangan'
-        ])
+        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
+            ->with([
+                'siswa',
+                'tempat',
+                'periode',
+                'pembimbingLapangan'
+            ])
             ->where('id', $penempatanId)
             ->where('guru_pembimbing_id', $guru->id)
-            ->whereHas('siswa.user', fn($q) => $q->active())
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->firstOrFail();
 
         return view('dashboard.guru-dashboard.siswa-bimbingan.show', compact('penempatan'));

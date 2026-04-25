@@ -20,7 +20,8 @@ class ValidasiKPIController extends Controller
         ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id)
-                    ->whereHas('siswa.user', fn($qq) => $qq->active());
+                  ->where('status', 'aktif') 
+                  ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
             });
 
         /* ================= FILTER SISWA ================= */
@@ -72,11 +73,12 @@ class ValidasiKPIController extends Controller
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = $guru->penempatanPkl()
             ->with('siswa')
-            ->where('status_validasi', 'diterima')
-            ->whereHas('siswa.user', fn($q) => $q->active())
+            ->where('status', 'aktif')
+            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->get()
             ->pluck('siswa')
-            ->unique('id');
+            ->unique('id')
+            ->values();
 
         return view(
             'dashboard.guru-dashboard.validasi-kpi.index',
