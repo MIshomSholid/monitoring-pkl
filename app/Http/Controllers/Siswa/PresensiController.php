@@ -286,9 +286,11 @@ class PresensiController extends Controller
     /* ================= BROADCAST HELPER ================= */
     private function broadcastPresensi($presensi, $penempatan)
     {
+        $url = config('services.realtime.url') . '/broadcast';
+        
         $response = Http::timeout(3)
             ->retry(2, 100)
-            ->post('https://accomplished-truth-production-ff71.up.railway.app/broadcast', [
+            ->post($url, [
                 'event' => 'presensi.created',
                 'data' => [
                     'id' => $presensi->id,
