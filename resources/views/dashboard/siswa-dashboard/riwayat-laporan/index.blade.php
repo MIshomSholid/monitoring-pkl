@@ -59,7 +59,7 @@
 
                         <td class="px-4 py-3">
                             @if ($item->file_bukti)
-                                <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                                <a href="{{ $item->file_bukti }}"
                                 target="_blank"
                                 class="text-blue-600 hover:underline">
                                     Lihat File
@@ -125,7 +125,7 @@
 
                 <div>
                     @if ($item->file_bukti)
-                        <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                        <a href="{{ $item->file_bukti }}"
                         target="_blank"
                         class="text-blue-600 hover:underline">
                             Lihat File

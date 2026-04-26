@@ -30,7 +30,7 @@
 
                         @php
                             $foto = $penempatan->siswa->foto_profil
-                                ? asset('storage/' . $penempatan->siswa->foto_profil)
+                                ? $penempatan->siswa->foto_profil
                                 : 'https://ui-avatars.com/api/?name=' . urlencode($penempatan->siswa->nama_lengkap) . '&background=6366f1&color=fff';
                         @endphp
 

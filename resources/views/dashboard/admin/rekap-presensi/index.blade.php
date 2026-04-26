@@ -150,14 +150,14 @@
 
                     <td class="px-4 py-3">
                         @if ($item->jenis_presensi === 'hadir' && $item->file_bukti)
-                            <a href="{{ asset('storage/'.$item->file_bukti) }}"
+                            <a href="{{ $item->file_bukti }}"
                             target="_blank"
                             class="text-blue-600 hover:underline">
                                 Lihat Foto
                             </a>
 
                         @elseif ($item->jenis_presensi === 'izin' && $item->file_bukti)
-                            <a href="{{ asset('storage/'.$item->file_bukti) }}"
+                            <a href="{{ $item->file_bukti }}"
                             target="_blank"
                             class="text-blue-600 hover:underline">
                                 Lihat Bukti
@@ -258,7 +258,7 @@
             <div>
                 <p class="text-xs text-gray-500">Bukti</p>
                 @if ($item->file_bukti)
-                    <a href="{{ asset('storage/'.$item->file_bukti) }}"
+                    <a href="{{ $item->file_bukti }}"
                        target="_blank"
                        class="text-blue-600 hover:underline text-sm">
                         Lihat File

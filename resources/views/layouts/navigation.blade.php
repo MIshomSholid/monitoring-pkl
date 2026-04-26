@@ -17,11 +17,11 @@
         $photo = null;
 
         if ($user->role === 'siswa' && $user->siswa && $user->siswa->foto_profil) {
-            $photo = asset('storage/' . $user->siswa->foto_profil);
+            $photo = $user->siswa->foto_profil;
         } elseif ($user->role === 'guru_pembimbing' && $user->guruPembimbing && $user->guruPembimbing->foto_profil) {
-            $photo = asset('storage/' . $user->guruPembimbing->foto_profil);
+            $photo = $user->guruPembimbing->foto_profil;
         } elseif ($user->role === 'pembimbing_lapangan' && $user->pembimbingLapangan && $user->pembimbingLapangan->foto_profil) {
-            $photo = asset('storage/' . $user->pembimbingLapangan->foto_profil);
+            $photo = $user->pembimbingLapangan->foto_profil;
         }
     @endphp
 

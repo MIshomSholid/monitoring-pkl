@@ -130,7 +130,7 @@
 
                             <td class="px-4 py-3 break-words">
                                 @if ($item->file_bukti)
-                                    <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                                    <a href="{{ $item->file_bukti }}"
                                     target="_blank"
                                     class="text-indigo-600 hover:underline font-medium">
                                         Lihat File
@@ -196,7 +196,7 @@
 
                     <div>
                         @if ($item->file_bukti)
-                            <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                            <a href="{{ $item->file_bukti }}"
                             target="_blank"
                             class="text-indigo-600 hover:underline font-medium">
                                 Lihat File

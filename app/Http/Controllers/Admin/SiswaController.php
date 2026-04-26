@@ -7,7 +7,8 @@ use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
+
 
 class SiswaController extends Controller
 {
@@ -52,8 +53,24 @@ class SiswaController extends Controller
 
         DB::transaction(function () use ($request) {
             $pathFoto = null;
+
             if ($request->hasFile('foto_profil')) {
-                $pathFoto = $request->file('foto_profil')->store('siswa-profil', 'public');
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                        'api_key' => env('CLOUDINARY_API_KEY'),
+                        'api_secret' => env('CLOUDINARY_API_SECRET'),
+                    ],
+                ]);
+
+                $upload = $cloudinary->uploadApi()->upload(
+                    $request->file('foto_profil')->getRealPath(),
+                    [
+                        'folder' => 'siswa-profil'
+                    ]
+                );
+
+                $pathFoto = $upload['secure_url'];
             }
 
             Siswa::create([
@@ -113,13 +130,22 @@ class SiswaController extends Controller
 
             if ($request->hasFile('foto_profil')) {
 
-                // hapus foto lama
-                if ($siswa->foto_profil) {
-                    Storage::disk('public')->delete($siswa->foto_profil);
-                }
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                        'api_key' => env('CLOUDINARY_API_KEY'),
+                        'api_secret' => env('CLOUDINARY_API_SECRET'),
+                    ],
+                ]);
 
-                $data['foto_profil'] = $request->file('foto_profil')
-                    ->store('siswa-profil', 'public');
+                $upload = $cloudinary->uploadApi()->upload(
+                    $request->file('foto_profil')->getRealPath(),
+                    [
+                        'folder' => 'siswa-profil'
+                    ]
+                );
+
+                $data['foto_profil'] = $upload['secure_url'];
             }
 
             $siswa->update($data);

@@ -64,7 +64,7 @@
 
             @if ($guru->foto_profil)
                 <p class="text-sm text-gray-500 mt-1">Foto saat ini:</p>
-                <img src="{{ asset('storage/' . $guru->foto_profil) }}"
+                <img src="{{ $guru->foto_profil }}"
                      alt="Foto Profil Guru"
                      class="h-20 mt-2 rounded border">
             @endif

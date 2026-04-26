@@ -203,14 +203,14 @@
                                                 <td class="px-3 py-2">
 
                                                     @if ($p->jenis_presensi === 'hadir' && $p->foto_presensi)
-                                                        <a href="{{ asset('storage/' . $p->foto_presensi) }}" target="_blank"
+                                                        <a href="{{ $p->foto_presensi }}" target="_blank"
                                                             class="text-indigo-600 hover:underline">
                                                             Lihat Foto
                                                         </a>
 
                                                     @elseif ($p->jenis_presensi === 'izin' && $p->bukti_izin)
 
-                                                        <a href="{{ asset('storage/' . $p->bukti_izin) }}" target="_blank"
+                                                        <a href="{{ $p->bukti_izin }}" target="_blank"
                                                             class="text-indigo-600 hover:underline">
                                                             Lihat Bukti
                                                         </a>

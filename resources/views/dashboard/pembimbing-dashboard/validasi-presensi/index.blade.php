@@ -139,14 +139,14 @@
                     </p>
 
                     @if ($item->jenis_presensi === 'hadir' && $item->foto_presensi)
-                        <a href="{{ asset('storage/' . $item->foto_presensi) }}" target="_blank">
-                            <img src="{{ asset('storage/' . $item->foto_presensi) }}"
+                        <a href="{{ $item->foto_presensi }}" target="_blank">
+                            <img src="{{ $item->foto_presensi }}"
                                 class="w-48 rounded border hover:opacity-80 transition" alt="Foto Presensi Hadir">
                         </a>
 
                     @elseif ($item->jenis_presensi === 'izin' && $item->bukti_izin)
-                        <a href="{{ asset('storage/' . $item->bukti_izin) }}" target="_blank">
-                            <img src="{{ asset('storage/' . $item->bukti_izin) }}"
+                        <a href="{{ $item->bukti_izin }}" target="_blank">
+                            <img src="{{ $item->bukti_izin }}"
                                 class="w-48 rounded border hover:opacity-80 transition" alt="Bukti Izin">
                         </a>
 

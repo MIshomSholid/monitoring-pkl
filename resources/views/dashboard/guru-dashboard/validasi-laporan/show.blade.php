@@ -53,11 +53,11 @@
                 <div class="space-y-2">
 
                     {{-- PREVIEW IMAGE --}}
-                    <img src="{{ asset('storage/' . $laporan->file_bukti) }}"
+                    <img src="{{ $laporan->file_bukti }}"
                         class="w-64 rounded border shadow cursor-pointer"
                         onclick="window.open(this.src, '_blank')">
 
-                    <a href="{{ asset('storage/' . $laporan->file_bukti) }}"
+                    <a href="{{ $laporan->file_bukti }}"
                        target="_blank"
                        class="text-indigo-600 text-sm hover:underline">
                         Lihat ukuran penuh

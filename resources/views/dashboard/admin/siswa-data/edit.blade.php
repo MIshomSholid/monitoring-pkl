@@ -45,7 +45,7 @@
                 </label>
 
                 @if($siswa->foto_profil)
-                    <img src="{{ asset('storage/' . $siswa->foto_profil) }}"
+                    <img src="{{ $siswa->foto_profil }}"
                         class="w-24 h-24 rounded-full object-cover mb-2 border">
                 @endif
 

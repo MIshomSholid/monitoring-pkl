@@ -195,12 +195,12 @@
 
                                 <td class="px-4 py-2">
                                     @if ($item->jenis_presensi === 'hadir' && $item->foto_presensi)
-                                        <a href="{{ asset('storage/' . $item->foto_presensi) }}" target="_blank"
+                                        <a href="{{ $item->foto_presensi }}" target="_blank"
                                             class="text-indigo-600 hover:underline">
                                             Lihat Foto
                                         </a>
                                     @elseif ($item->jenis_presensi === 'izin' && $item->bukti_izin)
-                                        <a href="{{ asset('storage/' . $item->bukti_izin) }}" target="_blank"
+                                        <a href="{{ $item->bukti_izin }}" target="_blank"
                                             class="text-indigo-600 hover:underline">
                                             Lihat Bukti
                                         </a>
@@ -275,12 +275,12 @@
 
                         <div>
                             @if ($item->jenis_presensi === 'hadir' && $item->foto_presensi)
-                                <a href="{{ asset('storage/' . $item->foto_presensi) }}" target="_blank"
+                                <a href="{{ $item->foto_presensi }}" target="_blank"
                                     class="text-indigo-600 hover:underline">
                                     Lihat Foto
                                 </a>
                             @elseif ($item->jenis_presensi === 'izin' && $item->bukti_izin)
-                                <a href="{{ asset('storage/' . $item->bukti_izin) }}" target="_blank"
+                                <a href="{{ $item->bukti_izin }}" target="_blank"
                                     class="text-indigo-600 hover:underline">
                                     Lihat Bukti
                                 </a>

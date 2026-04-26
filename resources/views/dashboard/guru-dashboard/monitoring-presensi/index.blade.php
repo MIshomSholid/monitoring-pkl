@@ -164,7 +164,7 @@
                                         @endphp
 
                                         @if ($file)
-                                            <a href="{{ asset('storage/' . $file) }}" target="_blank"
+                                            <a href="{{ $file }}" target="_blank"
                                                 class="text-indigo-600 hover:underline">
                                                 {{ $label }}
                                             </a>
@@ -290,7 +290,7 @@
                                         @endphp
 
                                         @if ($file)
-                                            <a href="{{ asset('storage/' . $file) }}" target="_blank"
+                                            <a href="{{ $file }}" target="_blank"
                                                 class="text-indigo-600 hover:underline text-xs">
                                                 {{ $label }}
                                             </a>

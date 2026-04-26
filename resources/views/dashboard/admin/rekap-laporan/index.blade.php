@@ -142,7 +142,7 @@
 
                     <td class="px-4 py-3">
                         @if ($item->file_bukti)
-                            <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                            <a href="{{ $item->file_bukti }}"
                                target="_blank"
                                class="text-blue-600 hover:underline text-sm">
                                 Lihat File
@@ -222,7 +222,7 @@
                 @endswitch
 
                 @if ($item->file_bukti)
-                    <a href="{{ asset('storage/' . $item->file_bukti) }}"
+                    <a href="{{ $item->file_bukti }}"
                        target="_blank"
                        class="text-blue-600 hover:underline text-sm">
                         Lihat File

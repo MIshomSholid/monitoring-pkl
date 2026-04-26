@@ -102,13 +102,13 @@
 
                         ${
                             data.foto_presensi
-                                ? `<a href="/storage/${data.foto_presensi}" target="_blank">
-                                        <img src="/storage/${data.foto_presensi}" 
+                                ? `<a href="${data.foto_presensi}" target="_blank">
+                                        <img src="${data.foto_presensi}" 
                                             class="w-48 rounded border hover:opacity-80 transition">
                                 </a>`
                                 : data.bukti_izin
-                                  ? `<a href="/storage/${data.bukti_izin}" target="_blank">
-                                            <img src="/storage/${data.bukti_izin}" 
+                                  ? `<a href="${data.bukti_izin}" target="_blank">
+                                            <img src="${data.bukti_izin}" 
                                                 class="w-48 rounded border hover:opacity-80 transition">
                                     </a>`
                                   : `<span class="text-sm text-gray-400">
@@ -254,13 +254,13 @@
         let bukti = "-";
 
         if (data.foto_presensi) {
-            bukti = `<a href="/storage/${data.foto_presensi}" 
+            bukti = `<a href="${data.foto_presensi}" 
                     target="_blank"
                     class="text-indigo-600 hover:underline">
                     Lihat Foto
                  </a>`;
         } else if (data.bukti_izin) {
-            bukti = `<a href="/storage/${data.bukti_izin}" 
+            bukti = `<a href="${data.bukti_izin}" 
                     target="_blank"
                     class="text-indigo-600 hover:underline">
                     Lihat Bukti
@@ -354,13 +354,13 @@
         let bukti = "-";
 
         if (data.jenis_presensi === "hadir" && data.foto_presensi) {
-            bukti = `<a href="/storage/${data.foto_presensi}"
+            bukti = `<a href="${data.foto_presensi}"
                     target="_blank"
                     class="text-blue-600 hover:underline text-sm">
                     Lihat Foto
                  </a>`;
         } else if (data.jenis_presensi === "izin" && data.bukti_izin) {
-            bukti = `<a href="/storage/${data.bukti_izin}"
+            bukti = `<a href="${data.bukti_izin}"
                     target="_blank"
                     class="text-blue-600 hover:underline text-sm">
                     Lihat Bukti
@@ -449,11 +449,11 @@
 
     function buktiLink(data) {
         if (data.foto_presensi) {
-            return `<a href="/storage/${data.foto_presensi}" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>`;
+            return `<a href="${data.foto_presensi}" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>`;
         }
 
         if (data.bukti_izin) {
-            return `<a href="/storage/${data.bukti_izin}" target="_blank" class="text-blue-600 hover:underline">Lihat Bukti</a>`;
+            return `<a href="${data.bukti_izin}" target="_blank" class="text-blue-600 hover:underline">Lihat Bukti</a>`;
         }
 
         return "-";

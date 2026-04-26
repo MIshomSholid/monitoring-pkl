@@ -49,7 +49,7 @@
     {{-- Foto Saat Ini --}}
     @if ($pembimbing->foto_profil)
         <p class="text-sm text-gray-500 mt-2">Foto saat ini:</p>
-        <img src="{{ asset('storage/' . $pembimbing->foto_profil) }}"
+        <img src="{{ $pembimbing->foto_profil }}"
              alt="Foto Profil Pembimbing"
              class="h-24 mt-2 rounded border object-cover">
     @else
