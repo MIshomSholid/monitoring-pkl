@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GuruPembimbing;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
 
 class GuruPembimbingController extends Controller
 {
@@ -17,7 +17,7 @@ class GuruPembimbingController extends Controller
     {
         $query = GuruPembimbing::with('user');
 
-        // 🔍 SEARCH
+        // SEARCH
         if ($request->filled('search')) {
             $search = $request->search;
 
@@ -68,12 +68,23 @@ class GuruPembimbingController extends Controller
 
         // Upload foto jika ada
         if ($request->hasFile('foto_profil')) {
-            if ($guru && $guru->foto_profil) {
-                Storage::disk('public')->delete($guru->foto_profil);
-            }
 
-            $validated['foto_profil'] = $request->file('foto_profil')
-                ->store('guru-profil', 'public');
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key' => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                ],
+            ]);
+
+            $upload = $cloudinary->uploadApi()->upload(
+                $request->file('foto_profil')->getRealPath(),
+                [
+                    'folder' => 'guru-profil'
+                ]
+            );
+
+            $validated['foto_profil'] = $upload['secure_url'];
         }
 
         // CREATE atau UPDATE berdasarkan user_id
@@ -110,12 +121,22 @@ class GuruPembimbingController extends Controller
 
         // Ganti foto jika upload baru
         if ($request->hasFile('foto_profil')) {
-            if ($guru->foto_profil) {
-                Storage::disk('public')->delete($guru->foto_profil);
-            }
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key' => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                ],
+            ]);
 
-            $validated['foto_profil'] = $request->file('foto_profil')
-                ->store('guru-profil', 'public');
+            $upload = $cloudinary->uploadApi()->upload(
+                $request->file('foto_profil')->getRealPath(),
+                [
+                    'folder' => 'guru-profil'
+                ]
+            );
+
+            $validated['foto_profil'] = $upload['secure_url'];
         }
 
         $guru->update($validated);
@@ -130,10 +151,6 @@ class GuruPembimbingController extends Controller
      */
     public function destroy(GuruPembimbing $guru)
     {
-        if ($guru->foto_profil) {
-            Storage::disk('public')->delete($guru->foto_profil);
-        }
-
         $guru->delete();
 
         return redirect()

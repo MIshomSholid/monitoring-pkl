@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Models\Presensi;
+use Cloudinary\Cloudinary;
 
 class PresensiController extends Controller
 {
@@ -24,7 +25,7 @@ class PresensiController extends Controller
                 'presensiHariIni' => null,
                 'riwayatPresensi' => collect(),
 
-                // 🔥 TAMBAHAN WAJIB
+                // TAMBAHAN WAJIB
                 'latPkl' => null,
                 'lngPkl' => null,
                 'radius' => 0,
@@ -40,7 +41,7 @@ class PresensiController extends Controller
                 'presensiHariIni' => null,
                 'riwayatPresensi' => collect(),
 
-                // 🔥 TAMBAHAN WAJIB
+                // TAMBAHAN WAJIB
                 'latPkl' => null,
                 'lngPkl' => null,
                 'radius' => 0,
@@ -129,8 +130,22 @@ class PresensiController extends Controller
                 ]);
             }
 
-            $fotoPath = $request->file('foto_presensi')
-                ->store('presensi', 'public');
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key' => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                ],
+            ]);
+
+            $upload = $cloudinary->uploadApi()->upload(
+                $request->file('foto_presensi')->getRealPath(),
+                [
+                    'folder' => 'presensi',
+                ]
+            );
+
+            $fotoPath = $upload['secure_url'];
 
             $presensi = Presensi::create([
                 'penempatan_pkl_id' => $penempatan->id,
@@ -187,8 +202,24 @@ class PresensiController extends Controller
             $buktiPath = null;
 
             if ($request->hasFile('bukti_izin')) {
-                $buktiPath = $request->file('bukti_izin')
-                    ->store('izin', 'public');
+
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                        'api_key' => env('CLOUDINARY_API_KEY'),
+                        'api_secret' => env('CLOUDINARY_API_SECRET'),
+                    ],
+                ]);
+
+                $upload = $cloudinary->uploadApi()->upload(
+                    $request->file('bukti_izin')->getRealPath(),
+                    [
+                        'folder' => 'izin',
+                        'resource_type' => 'auto'
+                    ]
+                );
+
+                $buktiPath = $upload['secure_url'];
             }
 
             $presensi = Presensi::create([

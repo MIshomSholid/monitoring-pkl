@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LaporanKegiatan;
 use App\Models\Presensi;
+use Cloudinary\Cloudinary;
 
 class LaporanKegiatanController extends Controller
 {
@@ -88,9 +89,18 @@ class LaporanKegiatanController extends Controller
         ]);
 
         $filePath = null;
+
         if ($request->hasFile('file_bukti')) {
-            $filePath = $request->file('file_bukti')
-                ->store('laporan-kegiatan', 'public');
+
+            $upload = $this->cloudinary()->uploadApi()->upload(
+                $request->file('file_bukti')->getRealPath(),
+                [
+                    'folder' => 'laporan-kegiatan',
+                    'resource_type' => 'auto' 
+                ]
+            );
+
+            $filePath = $upload['secure_url'];
         }
 
         LaporanKegiatan::create([
@@ -104,5 +114,16 @@ class LaporanKegiatanController extends Controller
         return redirect()
             ->route('siswa.laporan-kegiatan.index')
             ->with('success', 'Laporan kegiatan berhasil dikirim.');
+    }
+
+    private function cloudinary()
+    {
+        return new Cloudinary([
+            'cloud' => [
+                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                'api_key' => env('CLOUDINARY_API_KEY'),
+                'api_secret' => env('CLOUDINARY_API_SECRET'),
+            ],
+        ]);
     }
 }

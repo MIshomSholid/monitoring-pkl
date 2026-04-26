@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PembimbingLapangan;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
 
 class PembimbingLapanganController extends Controller
 {
@@ -14,7 +14,7 @@ class PembimbingLapanganController extends Controller
     {
         $query = PembimbingLapangan::with('user');
 
-        // 🔍 SEARCH
+        // SEARCH
         if ($request->filled('search')) {
             $search = $request->search;
 
@@ -56,8 +56,23 @@ class PembimbingLapanganController extends Controller
         ]);
 
         if ($request->hasFile('foto_profil')) {
-            $validated['foto_profil'] = $request->file('foto_profil')
-                ->store('pembimbing-profil', 'public');
+
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key' => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                ],
+            ]);
+
+            $upload = $cloudinary->uploadApi()->upload(
+                $request->file('foto_profil')->getRealPath(),
+                [
+                    'folder' => 'pembimbing-profil'
+                ]
+            );
+
+            $validated['foto_profil'] = $upload['secure_url'];
         }
 
         PembimbingLapangan::updateOrCreate(
@@ -85,12 +100,23 @@ class PembimbingLapanganController extends Controller
         ]);
 
         if ($request->hasFile('foto_profil')) {
-            if ($pembimbing->foto_profil) {
-                Storage::disk('public')->delete($pembimbing->foto_profil);
-            }
 
-            $validated['foto_profil'] = $request->file('foto_profil')
-                ->store('pembimbing-profil', 'public');
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key' => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                ],
+            ]);
+
+            $upload = $cloudinary->uploadApi()->upload(
+                $request->file('foto_profil')->getRealPath(),
+                [
+                    'folder' => 'pembimbing-profil'
+                ]
+            );
+
+            $validated['foto_profil'] = $upload['secure_url'];
         }
 
         $pembimbing->update($validated);
@@ -101,10 +127,6 @@ class PembimbingLapanganController extends Controller
 
     public function destroy(PembimbingLapangan $pembimbing)
     {
-        if ($pembimbing->foto_profil) {
-            Storage::disk('public')->delete($pembimbing->foto_profil);
-        }
-
         $pembimbing->delete();
 
         return redirect()->route('admin.pembimbing.index')
