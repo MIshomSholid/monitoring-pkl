@@ -286,28 +286,39 @@ class PresensiController extends Controller
     /* ================= BROADCAST HELPER ================= */
     private function broadcastPresensi($presensi, $penempatan)
     {
-        Http::post(env('REALTIME_URL') . '/broadcast', [
-            'event' => 'presensi.created',
-            'data' => [
-                'id' => $presensi->id,
-                'tanggal' => \Carbon\Carbon::parse($presensi->tanggal)->format('d M Y'),
-                'jenis_presensi' => $presensi->jenis_presensi,
-                'waktu_presensi' => $presensi->waktu_presensi,
-                'nama_siswa' => $penempatan->siswa->nama_lengkap,
-                'nama_perusahaan' => $penempatan->tempatPkl->nama_perusahaan,
-                'status_validasi' => $presensi->status_validasi,
-                'jarak_meter' => $presensi->jarak_meter,
+        $response = Http::timeout(3)
+            ->retry(2, 100)
+            ->post(env('REALTIME_URL') . '/broadcast', [
+                'event' => 'presensi.created',
+                'data' => [
+                    'id' => $presensi->id,
+                    'tanggal' => \Carbon\Carbon::parse($presensi->tanggal)->format('d M Y'),
+                    'jenis_presensi' => $presensi->jenis_presensi,
+                    'waktu_presensi' => $presensi->waktu_presensi,
+                    'nama_siswa' => $penempatan->siswa->nama_lengkap,
+                    'nama_perusahaan' => $penempatan->tempatPkl->nama_perusahaan,
+                    'status_validasi' => $presensi->status_validasi,
+                    'jarak_meter' => $presensi->jarak_meter,
 
-                'foto_presensi' => $presensi->foto_presensi,
-                'bukti_izin' => $presensi->bukti_izin,
-                'latitude' => $presensi->latitude,
-                'longitude' => $presensi->longitude,
+                    'foto_presensi' => $presensi->foto_presensi,
+                    'bukti_izin' => $presensi->bukti_izin,
+                    'latitude' => $presensi->latitude,
+                    'longitude' => $presensi->longitude,
 
-                'siswa_user_id' => $penempatan->siswa->user_id,
-                'guru_user_id' => $penempatan->guruPembimbing->user_id ?? null,
-                'pembimbing_user_id' => $penempatan->pembimbingLapangan->user_id ?? null,
-            ]
-        ]);
+                    // 🔥 FIX NULL RELATION
+                    'siswa_user_id' => $penempatan->siswa->user_id,
+                    'guru_user_id' => optional($penempatan->guruPembimbing)->user_id,
+                    'pembimbing_user_id' => optional($penempatan->pembimbingLapangan)->user_id,
+                ]
+            ]);
+
+        // 🔥 DEBUG BIAR KELIHATAN ERROR
+        if (!$response->successful()) {
+            \Log::error('Realtime broadcast gagal', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+        }
     }
 
     /* ================= HELPER ================= */
