@@ -11,6 +11,13 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+    res.send("Node hidup");
+});
+
+app.get("/test", (req, res) => {
+    res.send("Route OK");
+});
 
 const server = http.createServer(app);
 
@@ -52,31 +59,37 @@ io.on("connection", (socket) => {
 /* ================= LARAVEL BROADCAST ENDPOINT ================= */
 
 app.post("/broadcast", (req, res) => {
+    console.log("🔥 MASUK /broadcast");
+
     const { event, data } = req.body;
 
+    console.log("EVENT:", event);
+    console.log("DATA:", data);
+
     if (!event || !data) {
+        console.log("❌ Payload invalid");
         return res.status(400).json({ error: "Invalid payload" });
     }
 
-    // Broadcast ke admin
+    // ADMIN
     io.to("admin").emit(event, data);
 
-    // Broadcast ke siswa
+    // SISWA
     if (data.siswa_user_id) {
         io.to(`user_${data.siswa_user_id}`).emit(event, data);
     }
 
-    // Broadcast ke guru pembimbing
+    // GURU
     if (data.guru_user_id) {
         io.to(`user_${data.guru_user_id}`).emit(event, data);
     }
 
-    // Broadcast ke pembimbing lapangan
+    // PEMBIMBING
     if (data.pembimbing_user_id) {
         io.to(`user_${data.pembimbing_user_id}`).emit(event, data);
     }
 
-    console.log("Broadcast executed:", event);
+    console.log("✅ Broadcast sukses:", event);
 
     return res.json({ status: "ok" });
 });
