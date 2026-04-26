@@ -288,7 +288,7 @@ class PresensiController extends Controller
     {
         $response = Http::timeout(3)
             ->retry(2, 100)
-            ->post(env('REALTIME_URL') . '/broadcast', [
+            ->post('https://accomplished-truth-production-ff71.up.railway.app/broadcast', [
                 'event' => 'presensi.created',
                 'data' => [
                     'id' => $presensi->id,
@@ -305,14 +305,12 @@ class PresensiController extends Controller
                     'latitude' => $presensi->latitude,
                     'longitude' => $presensi->longitude,
 
-                    // 🔥 FIX NULL RELATION
                     'siswa_user_id' => $penempatan->siswa->user_id,
                     'guru_user_id' => optional($penempatan->guruPembimbing)->user_id,
                     'pembimbing_user_id' => optional($penempatan->pembimbingLapangan)->user_id,
                 ]
             ]);
-
-        // 🔥 DEBUG BIAR KELIHATAN ERROR
+ 
         if (!$response->successful()) {
             \Log::error('Realtime broadcast gagal', [
                 'status' => $response->status(),
