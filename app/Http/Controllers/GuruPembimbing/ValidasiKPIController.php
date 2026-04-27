@@ -20,8 +20,8 @@ class ValidasiKPIController extends Controller
         ])
             ->whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id)
-                  ->where('status', 'aktif') 
-                  ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
+                    ->where('status', 'aktif')
+                    ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
             });
 
         /* ================= FILTER SISWA ================= */
@@ -98,10 +98,11 @@ class ValidasiKPIController extends Controller
             'status' => 'required|in:diterima,ditolak',
         ]);
 
-        PenilaianKpi::whereHas('penempatanPkl', function ($q) use ($penempatanPklId) {
+        $guru = GuruPembimbing::where('user_id', Auth::id())->firstOrFail();
+
+        $updated = PenilaianKpi::whereHas('penempatanPkl', function ($q) use ($penempatanPklId, $guru) {
             $q->where('id', $penempatanPklId)
-                ->where('guru_pembimbing_id', Auth::id())
-                ->whereHas('siswa.user', fn($qq) => $qq->active());
+                ->where('guru_pembimbing_id', $guru->id); // ✅ FIX DISINI
         })
             ->whereDate('periode_penilaian', $tanggal)
             ->update([
@@ -109,6 +110,8 @@ class ValidasiKPIController extends Controller
                 'validated_by' => Auth::id(),
                 'validated_at' => now(),
             ]);
+        
+        dd($updated);
 
         return back()->with('success', 'Penilaian KPI berhasil divalidasi.');
     }
