@@ -35,7 +35,16 @@ class PenilaianKPIController extends Controller
                 $today <= $p->periodePkl->tanggal_selesai;
         });
 
-        $isDalamMasaPkl = $penempatanAktifPkl->isNotEmpty();
+        $today = now()->toDateString();
+
+        $isDalamMasaPkl = $penempatan->contains(function ($p) use ($today) {
+
+            if (!$p->periodePkl)
+                return false;
+
+            return $today >= $p->periodePkl->tanggal_mulai &&
+                $today <= $p->periodePkl->tanggal_selesai;
+        });
 
         // ambil siswa yang SUDAH DINILAI HARI INI
         $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $tanggal)
