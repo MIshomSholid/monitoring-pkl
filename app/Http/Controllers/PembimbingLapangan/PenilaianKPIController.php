@@ -14,26 +14,23 @@ class PenilaianKPIController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        $today = now()->toDateString();
+        $tanggal = now()->toDateString();
 
-        // ✅ Ambil HANYA yang dalam masa PKL
-        $penempatanAktifPkl = PenempatanPkl::with(['siswa', 'tempat', 'periodePkl'])
+        // Ambil semua (biarkan global scope jalan)
+        $penempatan = PenempatanPkl::with(['siswa', 'tempat'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
-            ->where('status', 'aktif')
-            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
-            ->whereHas('periodePkl', function ($q) use ($today) {
-                $q->whereDate('tanggal_mulai', '<=', $today)
-                    ->whereDate('tanggal_selesai', '>=', $today);
-            })
             ->get();
 
-        // ✅ CEK ADA / TIDAK
+        // 🔥 FILTER PAKAI HELPER MODEL (INI KUNCI NYA)
+        $penempatanAktifPkl = $penempatan->filter(function ($p) {
+            return $p->isAktifHariIni();
+        });
+
         $isDalamMasaPkl = $penempatanAktifPkl->isNotEmpty();
 
-        // ✅ ambil yang sudah dinilai (hanya yg aktif)
-        $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $today)
+        $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $tanggal)
             ->whereIn('penempatan_pkl_id', $penempatanAktifPkl->pluck('id'))
             ->pluck('penempatan_pkl_id')
             ->unique()
