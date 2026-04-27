@@ -15,16 +15,27 @@ class PenilaianKPIController extends Controller
     {
         $userId = Auth::id();
         $tanggal = now()->toDateString();
+        $today = now()->toDateString();
 
         // Semua siswa bimbingan
         $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
-            ->with(['siswa', 'tempat'])
+            ->with(['siswa', 'tempat', 'periodePkl'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
             ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
             ->get();
+
+        $penempatanAktifPkl = $penempatan->filter(function ($p) use ($today) {
+            if (!$p->periodePkl)
+                return false;
+
+            return $today >= $p->periodePkl->tanggal_mulai &&
+                $today <= $p->periodePkl->tanggal_selesai;
+        });
+
+        $isDalamMasaPkl = $penempatanAktifPkl->isNotEmpty();
 
         // ambil siswa yang SUDAH DINILAI HARI INI
         $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $tanggal)
@@ -38,7 +49,12 @@ class PenilaianKPIController extends Controller
 
         return view(
             'dashboard.pembimbing-dashboard.penilaian-kpi.index',
-            compact('penempatan', 'dinilaiHariIni')
+            compact(
+                'penempatan',
+                'penempatanAktifPkl',
+                'dinilaiHariIni',
+                'isDalamMasaPkl'
+            )
         );
     }
 
