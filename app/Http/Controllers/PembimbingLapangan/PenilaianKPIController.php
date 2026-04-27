@@ -14,44 +14,27 @@ class PenilaianKPIController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        $tanggal = now()->toDateString();
         $today = now()->toDateString();
 
-        // Semua siswa bimbingan
-        $penempatan = PenempatanPkl::withoutGlobalScope('aktif')
-            ->with(['siswa', 'tempat', 'periodePkl'])
+        // Ambil hanya penempatan yang DALAM masa PKL (hari ini)
+        $penempatanAktifPkl = PenempatanPkl::with(['siswa', 'tempat', 'periodePkl'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->where('status', 'aktif')
             ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
+            ->whereHas('periodePkl', function ($q) use ($today) {
+                $q->whereDate('tanggal_mulai', '<=', $today)
+                    ->whereDate('tanggal_selesai', '>=', $today);
+            })
             ->get();
 
-        $penempatanAktifPkl = $penempatan->filter(function ($p) use ($today) {
-            if (!$p->periodePkl)
-                return false;
+        // Kalau tidak ada satupun yang aktif hari ini
+        $isDalamMasaPkl = $penempatanAktifPkl->isNotEmpty();
 
-            return $today >= $p->periodePkl->tanggal_mulai &&
-                $today <= $p->periodePkl->tanggal_selesai;
-        });
-
-        $today = now()->toDateString();
-
-        $isDalamMasaPkl = $penempatan->contains(function ($p) use ($today) {
-
-            if (!$p->periodePkl)
-                return false;
-
-            return $today >= $p->periodePkl->tanggal_mulai &&
-                $today <= $p->periodePkl->tanggal_selesai;
-        });
-
-        // ambil siswa yang SUDAH DINILAI HARI INI
-        $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $tanggal)
-            ->whereIn(
-                'penempatan_pkl_id',
-                $penempatan->pluck('id')
-            )
+        // ambil siswa yang sudah dinilai hari ini (hanya dari yg aktif)
+        $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $today)
+            ->whereIn('penempatan_pkl_id', $penempatanAktifPkl->pluck('id'))
             ->pluck('penempatan_pkl_id')
             ->unique()
             ->toArray();
@@ -59,7 +42,6 @@ class PenilaianKPIController extends Controller
         return view(
             'dashboard.pembimbing-dashboard.penilaian-kpi.index',
             compact(
-                'penempatan',
                 'penempatanAktifPkl',
                 'dinilaiHariIni',
                 'isDalamMasaPkl'
