@@ -16,7 +16,7 @@ class PenilaianKPIController extends Controller
         $userId = Auth::id();
         $today = now()->toDateString();
 
-        // Ambil hanya penempatan yang DALAM masa PKL (hari ini)
+        // ✅ Ambil HANYA yang dalam masa PKL
         $penempatanAktifPkl = PenempatanPkl::with(['siswa', 'tempat', 'periodePkl'])
             ->whereHas('pembimbingLapangan', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -29,10 +29,10 @@ class PenilaianKPIController extends Controller
             })
             ->get();
 
-        // Kalau tidak ada satupun yang aktif hari ini
+        // ✅ CEK ADA / TIDAK
         $isDalamMasaPkl = $penempatanAktifPkl->isNotEmpty();
 
-        // ambil siswa yang sudah dinilai hari ini (hanya dari yg aktif)
+        // ✅ ambil yang sudah dinilai (hanya yg aktif)
         $dinilaiHariIni = PenilaianKpi::whereDate('periode_penilaian', $today)
             ->whereIn('penempatan_pkl_id', $penempatanAktifPkl->pluck('id'))
             ->pluck('penempatan_pkl_id')
@@ -67,20 +67,6 @@ class PenilaianKPIController extends Controller
         $penempatanId = $request->penempatan_pkl_id;
         $userId = Auth::id();
         $tanggal = now()->toDateString();
-
-        /* ================= AMBIL PENEMPATAN + PERIODE ================= */
-        $penempatan = PenempatanPkl::with('periodePkl')->findOrFail($penempatanId);
-
-        /* ================= CEK MASA PKL ================= */
-        $today = now()->toDateString();
-        $mulai = $penempatan->periodePkl->tanggal_mulai ?? null;
-        $selesai = $penempatan->periodePkl->tanggal_selesai ?? null;
-
-        if (!$mulai || !$selesai || $today < $mulai || $today > $selesai) {
-            return back()->withErrors([
-                'penempatan_pkl_id' => 'Penilaian KPI hanya bisa dilakukan saat masa PKL berlangsung.'
-            ]);
-        }
 
         /* ================= CEK VALIDASI PEMBIMBING LAPANGAN & STATUS AKTIF ================= */
         $valid = PenempatanPkl::where('id', $penempatanId)
