@@ -110,8 +110,6 @@ class ValidasiKPIController extends Controller
                 'validated_by' => Auth::id(),
                 'validated_at' => now(),
             ]);
-        
-        dd($updated);
 
         return back()->with('success', 'Penilaian KPI berhasil divalidasi.');
     }
