@@ -41,7 +41,7 @@
 
                         <option value="">Pilih Siswa</option>
 
-                        @foreach ($penempatan as $p)
+                        @foreach ($penempatanAktifPkl as $p)
 
                             @php
                                 $sudahDinilai = in_array($p->id, $dinilaiHariIni ?? []);

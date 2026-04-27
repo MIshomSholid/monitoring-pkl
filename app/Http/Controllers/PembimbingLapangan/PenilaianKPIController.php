@@ -39,6 +39,7 @@ class PenilaianKPIController extends Controller
         return view(
             'dashboard.pembimbing-dashboard.penilaian-kpi.index',
             compact(
+                'penempatan',
                 'penempatanAktifPkl',
                 'dinilaiHariIni',
                 'isDalamMasaPkl'
@@ -62,6 +63,15 @@ class PenilaianKPIController extends Controller
         ]);
 
         $penempatanId = $request->penempatan_pkl_id;
+
+        $penempatan = PenempatanPkl::findOrFail($penempatanId);
+
+        // VALIDASI MASA PKL (WAJIB ADA)
+        if (!$penempatan->isAktifHariIni()) {
+            return back()->withErrors([
+                'penempatan_pkl_id' => 'Penilaian KPI hanya bisa dilakukan saat masa PKL berlangsung.'
+            ]);
+        }
         $userId = Auth::id();
         $tanggal = now()->toDateString();
 
