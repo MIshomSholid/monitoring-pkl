@@ -61,6 +61,20 @@ class PenilaianKPIController extends Controller
         $userId = Auth::id();
         $tanggal = now()->toDateString();
 
+        /* ================= AMBIL PENEMPATAN + PERIODE ================= */
+        $penempatan = PenempatanPkl::with('periodePkl')->findOrFail($penempatanId);
+
+        /* ================= CEK MASA PKL ================= */
+        $today = now()->toDateString();
+        $mulai = $penempatan->periodePkl->tanggal_mulai ?? null;
+        $selesai = $penempatan->periodePkl->tanggal_selesai ?? null;
+
+        if (!$mulai || !$selesai || $today < $mulai || $today > $selesai) {
+            return back()->withErrors([
+                'penempatan_pkl_id' => 'Penilaian KPI hanya bisa dilakukan saat masa PKL berlangsung.'
+            ]);
+        }
+
         /* ================= CEK VALIDASI PEMBIMBING LAPANGAN & STATUS AKTIF ================= */
         $valid = PenempatanPkl::where('id', $penempatanId)
             ->where('status', 'aktif')

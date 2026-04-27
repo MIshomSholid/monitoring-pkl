@@ -102,7 +102,7 @@ class ValidasiKPIController extends Controller
 
         $updated = PenilaianKpi::whereHas('penempatanPkl', function ($q) use ($penempatanPklId, $guru) {
             $q->where('id', $penempatanPklId)
-                ->where('guru_pembimbing_id', $guru->id); // ✅ FIX DISINI
+                ->where('guru_pembimbing_id', $guru->id); 
         })
             ->whereDate('periode_penilaian', $tanggal)
             ->update([
