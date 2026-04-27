@@ -5,12 +5,6 @@
         Penilaian KPI Siswa
     </h1>
 
-    <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded mb-6 text-sm">
-        ⚠️ Penilaian KPI hanya dapat dilakukan <strong>1 kali dalam 1 hari</strong> untuk setiap siswa.<br>
-        Jika hari ini siswa <strong>tidak memiliki pekerjaan teknis</strong>, Anda dapat <strong>mengosongkan aspek
-            teknis</strong> dan hanya menilai aspek non-teknis.
-    </div>
-
     @if (!$isDalamMasaPkl)
 
         <div class="bg-red-50 border border-red-300 text-red-700 p-6 rounded">
@@ -19,6 +13,12 @@
         </div>
 
     @else
+
+        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded mb-6 text-sm">
+            ⚠️ Penilaian KPI hanya dapat dilakukan <strong>1 kali dalam 1 hari</strong> untuk setiap siswa.<br>
+            Jika hari ini siswa <strong>tidak memiliki pekerjaan teknis</strong>, Anda dapat <strong>mengosongkan aspek
+                teknis</strong> dan hanya menilai aspek non-teknis.
+        </div>
 
         <form method="POST" action="{{ route('pembimbing.penilaian-kpi.store') }}"
             class="bg-white p-6 rounded shadow space-y-8">
@@ -32,7 +32,7 @@
 
                     <option value="">Pilih Siswa</option>
 
-                    @foreach ($penempatanAktifPkl as $p)
+                    @foreach ($penempatan as $p)
 
                         @php
                             $sudahDinilai = in_array($p->id, $dinilaiHariIni ?? []);
@@ -120,5 +120,6 @@
                 Simpan Penilaian KPI
             </button>
         </form>
+
     @endif
 @endsection

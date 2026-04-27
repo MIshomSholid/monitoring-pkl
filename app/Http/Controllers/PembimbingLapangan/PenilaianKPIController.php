@@ -23,7 +23,7 @@ class PenilaianKPIController extends Controller
             })
             ->get();
 
-        // 🔥 FILTER PAKAI HELPER MODEL (INI KUNCI NYA)
+        // FILTER PAKAI HELPER MODEL (INI KUNCI NYA)
         $penempatanAktifPkl = $penempatan->filter(function ($p) {
             return $p->isAktifHariIni();
         });
