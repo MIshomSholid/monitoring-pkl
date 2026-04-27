@@ -7,7 +7,9 @@
         <div class="p-6 bg-gray-50 min-h-screen">
             <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg">
                 <h2 class="font-semibold">Penilaian KPI Tidak Tersedia</h2>
-                <p>Penilaian KPI hanya dapat dilakukan selama masa PKL.</p>
+                <p class="text-sm mt-1">
+                    Penilaian KPI hanya dapat dilakukan selama masa PKL.
+                </p>
             </div>
         </div>
 
