@@ -57,7 +57,7 @@
 
                 <div x-show="openUser" x-transition x-cloak class="ml-4 space-y-1">
 
-                    <a href="{{ route('admin.index') }}" class="block px-4 py-2 rounded-md hover:bg-indigo-50
+                    <a href="{{ route('admin.admin-data.index') }}" class="block px-4 py-2 rounded-md hover:bg-indigo-50
        {{ request()->is('admin/admin-data*') ? 'bg-indigo-100 text-indigo-700' : '' }}">
                         Data Admin
                     </a>

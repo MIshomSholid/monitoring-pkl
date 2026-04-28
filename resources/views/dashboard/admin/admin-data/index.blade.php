@@ -9,7 +9,7 @@
             Data Admin
         </h1>
 
-        <a href="{{ route('admin.data-admin.create') }}"
+        <a href="{{ route('admin.admin-data.create') }}"
            class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
             + Tambah Admin
         </a>
@@ -25,7 +25,7 @@
             Cari
         </button>
 
-        <a href="{{ route('admin.data-admin.index') }}"
+        <a href="{{ route('admin.admin-data.index') }}"
            class="px-4 py-2 bg-gray-300 rounded">
             Reset
         </a>
@@ -49,7 +49,7 @@
             <tbody>
                 @forelse ($admins as $index => $admin)
                     <tr class="border-t">
-                        <td class="p-3">{{ $index + 1 }}</td>
+                        <td class="p-3">{{ $loop->iteration }}</td>
 
                         <td class="p-3">
                             {{ $admin->nama_lengkap }}
@@ -60,11 +60,11 @@
                         </td>
 
                         <td class="p-3">
-                            {{ $admin->no_telepon }}
+                            {{ $admin->no_telepon ?? '-' }}
                         </td>
 
                         <td class="p-3">
-                            {{ $admin->alamat }}
+                            {{ $admin->alamat ?? '-' }}
                         </td>
 
                         <td class="p-3">
@@ -77,18 +77,22 @@
                         </td>
 
                         <td class="p-3 space-x-2">
-                            <a href="{{ route('admin.data-admin.show', $admin->id) }}"
-                               class="text-blue-600">Detail</a>
+                            <a href="{{ route('admin.admin-data.show', $admin->id) }}"
+                               class="text-blue-600 hover:underline">
+                                Detail
+                            </a>
 
-                            <a href="{{ route('admin.data-admin.edit', $admin->id) }}"
-                               class="text-yellow-600">Edit</a>
+                            <a href="{{ route('admin.admin-data.edit', $admin->id) }}"
+                               class="text-yellow-600 hover:underline">
+                                Edit
+                            </a>
 
-                            <form action="{{ route('admin.data-admin.destroy', $admin->id) }}"
+                            <form action="{{ route('admin.admin-data.destroy', $admin->id) }}"
                                   method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button onclick="return confirm('Yakin hapus?')"
-                                        class="text-red-600">
+                                        class="text-red-600 hover:underline">
                                     Hapus
                                 </button>
                             </form>

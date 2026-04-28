@@ -111,24 +111,33 @@ Route::middleware(['auth', 'check.active'])
         // Akun Login
         Route::resource('/users', UserController::class);
 
+        // ================= DATA ADMIN =================
+
         //Data Admin
-        Route::get('/admin-data', [UserController::class, 'indexAdmin'])
-            ->name('admin.index');
+        Route::get('/admin-data', [AdminDataController::class, 'index'])
+            ->name('admin-data.index');
+    
+        // CREATE
+        Route::get('/admin-data/create', [AdminDataController::class, 'create'])
+            ->name('admin-data.create');
 
-        // Data Siswa
-        Route::get('/siswa-data', [SiswaController::class, 'index'])
-            ->name('siswa.index');
+        Route::post('/admin-data', [AdminDataController::class, 'store'])
+            ->name('admin-data.store');
 
-        // Data Pembimbing Lapangan
-        Route::get('/pembimbing-data', [PembimbingLapanganController::class, 'index'])
-            ->name('pembimbing.index');
+        // DETAIL
+        Route::get('/admin-data/{admin}', [AdminDataController::class, 'show'])
+            ->name('admin-data.show');
 
-        // Tambah Data Siswa
-        Route::get('/siswa-data/create', [SiswaController::class, 'create'])
-            ->name('siswa.create');
+        // EDIT
+        Route::get('/admin-data/{admin}/edit', [AdminDataController::class, 'edit'])
+            ->name('admin-data.edit');
 
-        Route::post('/siswa-data', [SiswaController::class, 'store'])
-            ->name('siswa.store');
+        Route::put('/admin-data/{admin}', [AdminDataController::class, 'update'])
+            ->name('admin-data.update');
+
+        // DELETE
+        Route::delete('/admin-data/{admin}', [AdminDataController::class, 'destroy'])
+            ->name('admin-data.destroy');
 
         // ================= DATA SISWA =================
     
