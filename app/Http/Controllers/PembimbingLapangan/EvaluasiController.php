@@ -23,20 +23,15 @@ class EvaluasiController extends Controller
 
         // FILTER: hanya yang aktif hari ini
         $penempatanAktif = $penempatan->filter(function ($p) {
+            return $p->isAktifHariIni();
+        })->map(function ($p) {
 
-            // hanya yang masih dalam masa PKL
-            if (!$p->isAktifHariIni()) {
-                return false;
-            }
-
-            // cek apakah sudah ada evaluasi hari ini
-            $sudahEvaluasiHariIni = CatatanEvaluasi::where('penempatan_pkl_id', $p->id)
+            $p->sudah_evaluasi_hari_ini = CatatanEvaluasi::where('penempatan_pkl_id', $p->id)
                 ->where('kategori', 'pembimbing_lapangan')
                 ->whereDate('tanggal', now()->toDateString())
                 ->exists();
 
-            // kalau sudah → jangan tampil
-            return !$sudahEvaluasiHariIni;
+            return $p;
         });
 
         $isDalamMasaPkl = $penempatanAktif->isNotEmpty();

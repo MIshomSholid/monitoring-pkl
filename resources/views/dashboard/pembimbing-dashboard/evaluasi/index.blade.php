@@ -51,9 +51,15 @@
                         <option value="">Pilih Siswa</option>
 
                         @foreach ($penempatanAktif as $p)
-                            <option value="{{ $p->id }}">
+                            <option value="{{ $p->id }}" {{ $p->sudah_evaluasi_hari_ini ? 'disabled' : '' }}>
+
                                 {{ $p->siswa->nama_lengkap }}
                                 — {{ $p->tempat->nama_perusahaan }}
+
+                                @if($p->sudah_evaluasi_hari_ini)
+                                    (Sudah dievaluasi hari ini)
+                                @endif
+
                             </option>
                         @endforeach
 
