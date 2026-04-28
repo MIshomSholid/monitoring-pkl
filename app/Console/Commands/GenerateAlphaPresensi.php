@@ -16,6 +16,7 @@ class GenerateAlphaPresensi extends Command
 
     public function handle()
     {
+        \Log::info('GENERATE ALPHA JALAN: ' . now());
         Carbon::setLocale('id');
 
         $tanggal = Carbon::yesterday();
