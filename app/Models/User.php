@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasOne(Siswa::class, 'user_id');
     }
 
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
     // Relasi ke data guru pembimbing
     public function guruPembimbing()
     {

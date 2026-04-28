@@ -1,73 +1,88 @@
 @extends('dashboard.admin.layout')
 
+@section('title', 'Data Admin')
+
 @section('content')
-
 <div class="p-6 bg-gray-50 min-h-screen">
+<div class="flex flex-col gap-4">
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">
+    {{-- Header --}}
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">
             Data Admin
         </h1>
 
         <a href="{{ route('admin.admin-data.create') }}"
-           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+           class="inline-flex items-center justify-center px-4 py-2
+                  bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
             + Tambah Admin
         </a>
     </div>
 
-    {{-- SEARCH --}}
-    <form method="GET" class="bg-white p-4 rounded shadow mb-6 flex gap-3">
-        <input type="text" name="search" value="{{ request('search') }}"
-            placeholder="Cari Nama / Email / No HP..."
-            class="border px-3 py-2 rounded w-80">
+    {{-- Search --}}
+    <div class="bg-white border rounded-lg p-4">
+        <form method="GET" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Cari Nama / Email / No HP..."
+                class="w-full sm:w-72 border rounded px-3 py-2
+                       focus:ring focus:ring-indigo-200 text-sm"
+            />
 
-        <button class="px-4 py-2 bg-indigo-600 text-white rounded">
-            Cari
-        </button>
+            <button type="submit"
+                    class="w-full sm:w-auto px-4 py-2
+                           bg-indigo-600 text-white rounded
+                           hover:bg-indigo-700 text-sm">
+                Cari
+            </button>
 
-        <a href="{{ route('admin.admin-data.index') }}"
-           class="px-4 py-2 bg-gray-300 rounded">
-            Reset
-        </a>
-    </form>
+            <a href="{{ route('admin.admin-data.index') }}"
+               class="w-full sm:w-auto
+                      px-4 py-2 text-sm
+                      bg-gray-200 text-gray-700 rounded-md
+                      hover:bg-gray-300">
+                Reset
+            </a>
+        </form>
+    </div>
 
-    {{-- TABLE --}}
-    <div class="bg-white rounded shadow overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-100">
-                <tr class="text-left">
-                    <th class="p-3">No</th>
-                    <th class="p-3">Nama</th>
-                    <th class="p-3">Email</th>
-                    <th class="p-3">No Telepon</th>
-                    <th class="p-3">Alamat</th>
-                    <th class="p-3">Foto</th>
-                    <th class="p-3">Aksi</th>
+    {{-- TABLE DESKTOP --}}
+    <div class="hidden lg:block bg-white border rounded-lg overflow-x-auto">
+        <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="px-4 py-3 text-left">No</th>
+                    <th class="px-4 py-3 text-left">Nama</th>
+                    <th class="px-4 py-3 text-left">Email</th>
+                    <th class="px-4 py-3 text-left">No Telp</th>
+                    <th class="px-4 py-3 text-left">Alamat</th>
+                    <th class="px-4 py-3 text-left">Foto</th>
+                    <th class="px-4 py-3 text-left">Aksi</th>
                 </tr>
             </thead>
 
-            <tbody>
-                @forelse ($admins as $index => $admin)
-                    <tr class="border-t">
-                        <td class="p-3">{{ $loop->iteration }}</td>
+            <tbody class="divide-y">
+                @forelse ($admins as $admin)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ $loop->iteration }}</td>
 
-                        <td class="p-3">
-                            {{ $admin->nama_lengkap }}
-                        </td>
+                        <td class="px-4 py-2">{{ $admin->nama_lengkap }}</td>
 
-                        <td class="p-3">
+                        <td class="px-4 py-2">
                             {{ $admin->user->email ?? '-' }}
                         </td>
 
-                        <td class="p-3">
+                        <td class="px-4 py-2">
                             {{ $admin->no_telepon ?? '-' }}
                         </td>
 
-                        <td class="p-3">
+                        <td class="px-4 py-2">
                             {{ $admin->alamat ?? '-' }}
                         </td>
 
-                        <td class="p-3">
+                        <td class="px-4 py-2">
                             @if($admin->foto_profil)
                                 <img src="{{ asset('storage/' . $admin->foto_profil) }}"
                                      class="w-10 h-10 rounded object-cover">
@@ -76,7 +91,7 @@
                             @endif
                         </td>
 
-                        <td class="p-3 space-x-2">
+                        <td class="px-4 py-2 space-x-2 whitespace-nowrap">
                             <a href="{{ route('admin.admin-data.show', $admin->id) }}"
                                class="text-blue-600 hover:underline">
                                 Detail
@@ -100,7 +115,8 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-5 text-center text-gray-500">
+                        <td colspan="7"
+                            class="px-4 py-6 text-center text-gray-500">
                             Data admin belum tersedia
                         </td>
                     </tr>
@@ -109,6 +125,64 @@
         </table>
     </div>
 
-</div>
+    {{-- CARD MOBILE --}}
+    <div class="lg:hidden space-y-3">
+        @forelse ($admins as $admin)
+            <div class="bg-white border rounded-lg p-4 text-sm space-y-2">
 
+                <div class="flex items-center gap-3">
+                    @if($admin->foto_profil)
+                        <img src="{{ asset('storage/' . $admin->foto_profil) }}"
+                             class="w-10 h-10 rounded-full object-cover">
+                    @else
+                        <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                    @endif
+
+                    <div>
+                        <h3 class="font-semibold text-gray-800">
+                            {{ $admin->nama_lengkap }}
+                        </h3>
+                        <p class="text-gray-500 text-xs">
+                            {{ $admin->user->email ?? '-' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-gray-600 space-y-1">
+                    <div><span class="font-medium">No Telp:</span> {{ $admin->no_telepon ?? '-' }}</div>
+                    <div><span class="font-medium">Alamat:</span> {{ $admin->alamat ?? '-' }}</div>
+                </div>
+
+                <div class="flex gap-4 pt-2">
+                    <a href="{{ route('admin.admin-data.show', $admin->id) }}"
+                       class="text-blue-600 text-sm">
+                        Detail
+                    </a>
+
+                    <a href="{{ route('admin.admin-data.edit', $admin->id) }}"
+                       class="text-yellow-600 text-sm">
+                        Edit
+                    </a>
+
+                    <form action="{{ route('admin.admin-data.destroy', $admin->id) }}"
+                          method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button onclick="return confirm('Yakin hapus?')"
+                                class="text-red-600 text-sm">
+                            Hapus
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        @empty
+            <div class="text-center text-gray-500 py-6">
+                Data admin belum tersedia
+            </div>
+        @endforelse
+    </div>
+
+</div>
+</div>
 @endsection

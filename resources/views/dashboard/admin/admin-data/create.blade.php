@@ -4,103 +4,109 @@
 
 <div class="p-6 bg-gray-50 min-h-screen">
 
-    <h1 class="text-2xl font-bold mb-6">
+    <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6">
         Tambah Data Admin
     </h1>
 
-    <form action="{{ route('admin.admin-data.store') }}" method="POST" enctype="multipart/form-data"
-        class="bg-white p-6 rounded shadow space-y-5">
-        @csrf
+    <div class="bg-white border rounded-lg p-6 max-w-3xl">
 
-        {{-- NAMA --}}
-        <div>
-            <label class="font-medium">Nama Lengkap</label>
-            <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}"
-                class="w-full border rounded px-3 py-2 mt-1 @error('nama_lengkap') border-red-500 @enderror">
+        <form action="{{ route('admin.admin-data.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-            @error('nama_lengkap')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        {{-- EMAIL --}}
-        <div>
-            <label class="font-medium">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}"
-                class="w-full border rounded px-3 py-2 mt-1 @error('email') border-red-500 @enderror">
+                {{-- USER --}}
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">
+                        Pilih Akun Admin
+                    </label>
 
-            @error('email')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+                    <select name="user_id"
+                        class="w-full border rounded px-3 py-2 text-sm @error('user_id') border-red-500 @enderror"
+                        required>
 
-        {{-- PASSWORD --}}
-        <div>
-            <label class="font-medium">Password</label>
-            <input type="password" name="password"
-                class="w-full border rounded px-3 py-2 mt-1 @error('password') border-red-500 @enderror">
+                        <option value="">-- Pilih User --</option>
 
-            @error('password')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}"
+                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->email }}
+                            </option>
+                        @endforeach
+                    </select>
 
-        {{-- NO HP --}}
-        <div>
-            <label class="font-medium">No Telepon</label>
-            <input type="text" name="no_telepon" value="{{ old('no_telepon') }}"
-                class="w-full border rounded px-3 py-2 mt-1 @error('no_telepon') border-red-500 @enderror">
+                    @error('user_id')
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            @error('no_telepon')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+                {{-- NAMA --}}
+                <div>
+                    <label class="block text-sm font-medium mb-1">
+                        Nama Lengkap
+                    </label>
+                    <input type="text" name="nama_lengkap"
+                        value="{{ old('nama_lengkap') }}"
+                        class="w-full border rounded px-3 py-2 text-sm @error('nama_lengkap') border-red-500 @enderror">
 
-        {{-- ALAMAT --}}
-        <div>
-            <label class="font-medium">Alamat</label>
-            <textarea name="alamat" rows="3"
-                class="w-full border rounded px-3 py-2 mt-1 @error('alamat') border-red-500 @enderror">{{ old('alamat') }}</textarea>
+                    @error('nama_lengkap')
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            @error('alamat')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+                {{-- NO HP --}}
+                <div>
+                    <label class="block text-sm font-medium mb-1">
+                        No. Telepon
+                    </label>
+                    <input type="text" name="no_telepon"
+                        value="{{ old('no_telepon') }}"
+                        class="w-full border rounded px-3 py-2 text-sm">
+                </div>
 
-        {{-- FOTO --}}
-        <div>
-            <label class="font-medium">Foto Profil</label>
+                {{-- ALAMAT --}}
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">
+                        Alamat
+                    </label>
+                    <textarea name="alamat" rows="3"
+                        class="w-full border rounded px-3 py-2 text-sm">{{ old('alamat') }}</textarea>
+                </div>
 
-            <input type="file" name="foto_profil" accept="image/*"
-                onchange="previewImage(event)"
-                class="w-full border rounded px-3 py-2 mt-1 @error('foto_profil') border-red-500 @enderror">
+                {{-- FOTO --}}
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">
+                        Foto Profil
+                    </label>
 
-            @error('foto_profil')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+                    <input type="file" name="foto_profil" accept="image/*"
+                        onchange="previewImage(event)"
+                        class="w-full border rounded px-3 py-2 text-sm">
 
-            {{-- PREVIEW --}}
-            <img id="preview" class="mt-3 w-24 h-24 object-cover rounded hidden">
-        </div>
+                    <img id="preview"
+                        class="mt-3 w-24 h-24 object-cover rounded hidden">
+                </div>
 
-        {{-- BUTTON --}}
-        <div class="flex gap-3 pt-4">
-            <button type="submit"
-                class="px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                Simpan
-            </button>
+            </div>
 
-            <a href="{{ route('admin.admin-data.index') }}"
-                class="px-5 py-2 bg-gray-300 rounded">
-                Batal
-            </a>
-        </div>
+            {{-- BUTTON --}}
+            <div class="flex justify-end gap-3 mt-6">
+                <a href="{{ route('admin.admin-data.index') }}"
+                    class="px-4 py-2 border rounded text-sm">
+                    Batal
+                </a>
 
-    </form>
+                <button type="submit"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">
+                    Simpan Data Admin
+                </button>
+            </div>
+
+        </form>
+    </div>
 
 </div>
 
-{{-- SCRIPT PREVIEW --}}
 <script>
 function previewImage(event) {
     const input = event.target;

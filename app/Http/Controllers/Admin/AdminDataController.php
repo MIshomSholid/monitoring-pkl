@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 class AdminDataController extends Controller
@@ -25,10 +24,10 @@ class AdminDataController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%{$search}%")
-                  ->orWhere('no_telepon', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($qu) use ($search) {
-                      $qu->where('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('no_telepon', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($qu) use ($search) {
+                        $qu->where('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -44,7 +43,11 @@ class AdminDataController extends Controller
      */
     public function create()
     {
-        return view('dashboard.admin.admin-data.create');
+        $users = User::where('role', 'admin')
+            ->whereDoesntHave('admin')
+            ->get();
+
+        return view('dashboard.admin.admin-data.create', compact('users'));
     }
 
     /**
@@ -55,24 +58,15 @@ class AdminDataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
             'nama_lengkap' => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|min:6',
-            'no_telepon'   => 'nullable|string|max:20',
-            'alamat'       => 'nullable|string',
-            'foto_profil'  => 'nullable|image|max:2048',
+            'no_telepon' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
+            'foto_profil' => 'nullable|image|max:2048',
         ]);
 
         try {
             DB::transaction(function () use ($request) {
-
-                // CREATE USER LOGIN
-                $user = User::create([
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => 'admin',
-                    'is_active' => 1
-                ]);
 
                 // HANDLE FOTO
                 $fotoPath = null;
@@ -81,15 +75,13 @@ class AdminDataController extends Controller
                         ->store('admin-profil', 'public');
                 }
 
-                // CREATE ADMIN
                 Admin::create([
-                    'user_id'      => $user->id,
+                    'user_id' => $request->user_id,
                     'nama_lengkap' => $request->nama_lengkap,
-                    'no_telepon'   => $request->no_telepon,
-                    'alamat'       => $request->alamat,
-                    'foto_profil'  => $fotoPath,
+                    'no_telepon' => $request->no_telepon,
+                    'alamat' => $request->alamat,
+                    'foto_profil' => $fotoPath,
                 ]);
-
             });
 
         } catch (\Throwable $e) {
@@ -120,9 +112,16 @@ class AdminDataController extends Controller
      */
     public function edit($id)
     {
-        $admin = Admin::with('user')->findOrFail($id);
+        $admin = Admin::findOrFail($id);
 
-        return view('dashboard.admin.admin-data.edit', compact('admin'));
+        $users = User::where('role', 'admin')
+            ->where(function ($q) use ($admin) {
+                $q->whereDoesntHave('admin')
+                    ->orWhere('id', $admin->user_id);
+            })
+            ->get();
+
+        return view('dashboard.admin.admin-data.edit', compact('admin', 'users'));
     }
 
     /**
@@ -132,11 +131,10 @@ class AdminDataController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $admin = Admin::with('user')->findOrFail($id);
+        $admin = Admin::findOrFail($id);
 
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $admin->user_id,
             'no_telepon' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
             'foto_profil' => 'nullable|image|max:2048',
@@ -145,27 +143,18 @@ class AdminDataController extends Controller
         try {
             DB::transaction(function () use ($request, $admin) {
 
-                // UPDATE USER
-                $admin->user->update([
-                    'email' => $request->email
-                ]);
-
                 // HANDLE FOTO
                 if ($request->hasFile('foto_profil')) {
-                    $fotoPath = $request->file('foto_profil')
+                    $admin->foto_profil = $request->file('foto_profil')
                         ->store('admin-profil', 'public');
-
-                    $admin->foto_profil = $fotoPath;
                 }
 
-                // UPDATE ADMIN
                 $admin->update([
                     'nama_lengkap' => $request->nama_lengkap,
-                    'no_telepon'   => $request->no_telepon,
-                    'alamat'       => $request->alamat,
-                    'foto_profil'  => $admin->foto_profil,
+                    'no_telepon' => $request->no_telepon,
+                    'alamat' => $request->alamat,
+                    'foto_profil' => $admin->foto_profil,
                 ]);
-
             });
 
         } catch (\Throwable $e) {
@@ -183,14 +172,11 @@ class AdminDataController extends Controller
      * ========================
      */
     public function destroy($id)
-    {
-        $admin = Admin::findOrFail($id);
+{
+    $admin = Admin::findOrFail($id);
 
-        DB::transaction(function () use ($admin) {
-            $admin->user->delete();
-            $admin->delete();
-        });
+    $admin->delete();
 
-        return back()->with('success', 'Admin berhasil dihapus');
-    }
+    return back()->with('success', 'Admin berhasil dihapus');
+}
 }
