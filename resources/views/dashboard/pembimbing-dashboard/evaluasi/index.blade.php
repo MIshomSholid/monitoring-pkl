@@ -28,6 +28,17 @@
                 serta saran perbaikan kepada siswa PKL sebagai umpan balik langsung dari industri.
             </div>
 
+            @if($penempatanAktif->isEmpty())
+                <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-lg mb-6">
+                    <p class="font-semibold">
+                        Tidak Ada Siswa Tersedia
+                    </p>
+                    <p class="text-sm mt-1">
+                        Semua siswa sudah mendapatkan evaluasi hari ini.
+                    </p>
+                </div>
+            @endif
+
             {{-- FORM --}}
             <form method="POST" action="{{ route('pembimbing.evaluasi.store') }}"
                 class="bg-white p-6 rounded shadow mb-8 space-y-4">
@@ -35,8 +46,7 @@
 
                 <div>
                     <label class="font-medium">Siswa PKL</label>
-                    <select name="penempatan_pkl_id"
-                        class="w-full border rounded px-3 py-2" required>
+                    <select name="penempatan_pkl_id" class="w-full border rounded px-3 py-2" required>
 
                         <option value="">Pilih Siswa</option>
 
@@ -52,14 +62,11 @@
 
                 <div>
                     <label class="font-medium">Catatan / Evaluasi</label>
-                    <textarea name="catatan" rows="4"
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Tuliskan evaluasi..."
+                    <textarea name="catatan" rows="4" class="w-full border rounded px-3 py-2" placeholder="Tuliskan evaluasi..."
                         required></textarea>
                 </div>
 
-                <button type="submit"
-                    class="px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
                     Simpan Catatan
                 </button>
             </form>

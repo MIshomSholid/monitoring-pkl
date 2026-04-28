@@ -23,7 +23,20 @@ class EvaluasiController extends Controller
 
         // FILTER: hanya yang aktif hari ini
         $penempatanAktif = $penempatan->filter(function ($p) {
-            return $p->isAktifHariIni();
+
+            // hanya yang masih dalam masa PKL
+            if (!$p->isAktifHariIni()) {
+                return false;
+            }
+
+            // cek apakah sudah ada evaluasi hari ini
+            $sudahEvaluasiHariIni = CatatanEvaluasi::where('penempatan_pkl_id', $p->id)
+                ->where('kategori', 'pembimbing_lapangan')
+                ->whereDate('tanggal', now()->toDateString())
+                ->exists();
+
+            // kalau sudah → jangan tampil
+            return !$sudahEvaluasiHariIni;
         });
 
         $isDalamMasaPkl = $penempatanAktif->isNotEmpty();
@@ -78,6 +91,17 @@ class EvaluasiController extends Controller
                 $q->where('user_id', Auth::id());
             })
             ->firstOrFail();
+
+        $sudahEvaluasiHariIni = CatatanEvaluasi::where('penempatan_pkl_id', $penempatan->id)
+            ->where('kategori', 'pembimbing_lapangan')
+            ->whereDate('tanggal', now()->toDateString())
+            ->exists();
+
+        if ($sudahEvaluasiHariIni) {
+            return back()->withErrors([
+                'penempatan_pkl_id' => 'Siswa ini sudah dievaluasi hari ini.'
+            ]);
+        }
 
         CatatanEvaluasi::create([
             'penempatan_pkl_id' => $penempatan->id,
