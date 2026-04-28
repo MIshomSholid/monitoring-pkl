@@ -12,7 +12,7 @@
         <div style="width:110px;height:150px;overflow:hidden;border-radius:6px;border:1px solid #e5e7eb;background:#f3f4f6;flex-shrink:0;">
 
             @if($admin->foto_profil)
-                <img src="{{ asset('storage/' . $admin->foto_profil) }}"
+                <img src="{{ $admin->foto_profil }}"
                      style="width:100%;height:100%;object-fit:cover;">
             @else
                 <img src="https://ui-avatars.com/api/?name={{ urlencode($admin->nama_lengkap) }}&background=6366f1&color=fff"
