@@ -57,6 +57,11 @@
 
                 <div x-show="openUser" x-transition x-cloak class="ml-4 space-y-1">
 
+                    <a href="{{ route('admin.index') }}" class="block px-4 py-2 rounded-md hover:bg-indigo-50
+       {{ request()->is('admin/admin-data*') ? 'bg-indigo-100 text-indigo-700' : '' }}">
+                        Data Admin
+                    </a>
+
                     <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded-md hover:bg-indigo-50
            {{ request()->is('admin/users*') ? 'bg-indigo-100 text-indigo-700' : '' }}">
                         Akun Pengguna
@@ -103,8 +108,7 @@
                     Informasi & Jadwal PKL
                 </a>
 
-                <a href="{{ route('admin.kpi-bobot') }}" 
-                    class="block px-4 py-2 rounded-md hover:bg-indigo-50
+                <a href="{{ route('admin.kpi-bobot') }}" class="block px-4 py-2 rounded-md hover:bg-indigo-50
                     {{ request()->routeIs('admin.kpi-bobot') ? 'bg-indigo-100 text-indigo-700 font-semibold' : '' }}">
                     Pengaturan Bobot KPI
                 </a>

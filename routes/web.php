@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 /* ================= ADMIN CONTROLLERS ================= */
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminDataController;
 use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\GuruPembimbingController;
 use App\Http\Controllers\Admin\PembimbingLapanganController;
@@ -109,6 +110,10 @@ Route::middleware(['auth', 'check.active'])
     
         // Akun Login
         Route::resource('/users', UserController::class);
+
+        //Data Admin
+        Route::get('/admin-data', [UserController::class, 'indexAdmin'])
+            ->name('admin.index');
 
         // Data Siswa
         Route::get('/siswa-data', [SiswaController::class, 'index'])
@@ -284,7 +289,7 @@ Route::middleware(['auth', 'check.active'])
 | SISWA ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth','check.active', 'role:siswa'])
+Route::middleware(['auth', 'check.active', 'role:siswa'])
     ->prefix('siswa')
     ->name('siswa.')
     ->group(function () {
@@ -332,7 +337,7 @@ Route::middleware(['auth','check.active', 'role:siswa'])
 | GURU PEMBIMBING ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth','check.active','role:guru_pembimbing'])
+Route::middleware(['auth', 'check.active', 'role:guru_pembimbing'])
     ->prefix('guru')
     ->name('guru.')
     ->group(function () {
@@ -443,7 +448,7 @@ Route::middleware(['auth','check.active','role:guru_pembimbing'])
 | PEMBIMBING LAPANGAN ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'check.active','role:pembimbing_lapangan'])
+Route::middleware(['auth', 'check.active', 'role:pembimbing_lapangan'])
     ->prefix('pembimbing')
     ->name('pembimbing.')
     ->group(function () {
