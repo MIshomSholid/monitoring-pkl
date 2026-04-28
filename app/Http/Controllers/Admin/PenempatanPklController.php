@@ -70,6 +70,7 @@ class PenempatanPklController extends Controller
     public function create()
     {
         $siswaTerpakai = PenempatanPkl::withoutGlobalScope('aktif')
+            ->whereIn('status_validasi', ['menunggu', 'diterima'])
             ->pluck('siswa_id');
 
         return view('dashboard.admin.penempatan.create', [
