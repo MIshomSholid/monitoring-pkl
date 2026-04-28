@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('presensi:generate-alpha')->everyMinute();
+        $schedule->command('presensi:generate-alpha')->dailyAt('00:05');
     }
 
     /**
