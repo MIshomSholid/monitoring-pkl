@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Cloudinary\Cloudinary;
 
 class AdminDataController extends Controller
 {
@@ -70,9 +71,25 @@ class AdminDataController extends Controller
 
                 // HANDLE FOTO
                 $fotoPath = null;
+
                 if ($request->hasFile('foto_profil')) {
-                    $fotoPath = $request->file('foto_profil')
-                        ->store('admin-profil', 'public');
+
+                    $cloudinary = new Cloudinary([
+                        'cloud' => [
+                            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                            'api_key' => env('CLOUDINARY_API_KEY'),
+                            'api_secret' => env('CLOUDINARY_API_SECRET'),
+                        ],
+                    ]);
+
+                    $upload = $cloudinary->uploadApi()->upload(
+                        $request->file('foto_profil')->getRealPath(),
+                        [
+                            'folder' => 'admin-profil'
+                        ]
+                    );
+
+                    $fotoPath = $upload['secure_url']; 
                 }
 
                 Admin::create([
@@ -145,8 +162,23 @@ class AdminDataController extends Controller
 
                 // HANDLE FOTO
                 if ($request->hasFile('foto_profil')) {
-                    $admin->foto_profil = $request->file('foto_profil')
-                        ->store('admin-profil', 'public');
+
+                    $cloudinary = new Cloudinary([
+                        'cloud' => [
+                            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                            'api_key' => env('CLOUDINARY_API_KEY'),
+                            'api_secret' => env('CLOUDINARY_API_SECRET'),
+                        ],
+                    ]);
+
+                    $upload = $cloudinary->uploadApi()->upload(
+                        $request->file('foto_profil')->getRealPath(),
+                        [
+                            'folder' => 'admin-profil'
+                        ]
+                    );
+
+                    $admin->foto_profil = $upload['secure_url'];
                 }
 
                 $admin->update([
@@ -172,11 +204,11 @@ class AdminDataController extends Controller
      * ========================
      */
     public function destroy($id)
-{
-    $admin = Admin::findOrFail($id);
+    {
+        $admin = Admin::findOrFail($id);
 
-    $admin->delete();
+        $admin->delete();
 
-    return back()->with('success', 'Admin berhasil dihapus');
-}
+        return back()->with('success', 'Admin berhasil dihapus');
+    }
 }

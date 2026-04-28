@@ -16,7 +16,9 @@
         // ================= FOTO USER =================
         $photo = null;
 
-        if ($user->role === 'siswa' && $user->siswa && $user->siswa->foto_profil) {
+        if ($user->role === 'admin' && $user->admin && $user->admin->foto_profil) {
+            $photo = $user->admin->foto_profil;
+        } elseif ($user->role === 'siswa' && $user->siswa && $user->siswa->foto_profil) {
             $photo = $user->siswa->foto_profil;
         } elseif ($user->role === 'guru_pembimbing' && $user->guruPembimbing && $user->guruPembimbing->foto_profil) {
             $photo = $user->guruPembimbing->foto_profil;
