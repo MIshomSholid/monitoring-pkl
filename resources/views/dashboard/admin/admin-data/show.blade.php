@@ -45,16 +45,6 @@
                     <td>{{ $admin->alamat ?? '-' }}</td>
                 </tr>
 
-                <tr>
-                    <td class="py-1 font-medium">Dibuat</td>
-                    <td>{{ $admin->created_at ? $admin->created_at->format('d M Y H:i') : '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="py-1 font-medium">Diperbarui</td>
-                    <td>{{ $admin->updated_at ? $admin->updated_at->format('d M Y H:i') : '-' }}</td>
-                </tr>
-
             </table>
         </div>
 
