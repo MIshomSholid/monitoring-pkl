@@ -26,7 +26,7 @@ export function initMap(containerId, lat, lng, radius, pklLat = null, pklLng = n
 
     // 🔵 ICON USER (BIRU)
     const userIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
         iconSize: [30, 30],
         iconAnchor: [15, 30]
     });
