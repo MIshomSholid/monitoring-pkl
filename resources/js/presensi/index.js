@@ -16,7 +16,7 @@ window.startPresensiHadir = function () {
     const btnKirim = document.getElementById("btnKirim");
     const videoEl = document.getElementById("video");
 
-    // 🔥 GUARD UTAMA (PKL BELUM AKTIF / DATA TIDAK ADA)
+    // GUARD UTAMA (PKL BELUM AKTIF / DATA TIDAK ADA)
     if (!data || !data.dataset.lat || !data.dataset.lng) {
         console.warn("Presensi tidak aktif / belum masa PKL");
         return;
@@ -44,7 +44,7 @@ window.startPresensiHadir = function () {
         return;
     }
 
-    map = initMap("map", PKL_LAT, PKL_LNG, PKL_RADIUS);
+    map = initMap("map", PKL_LAT, PKL_LNG, PKL_RADIUS, PKL_LAT, PKL_LNG);
 
     startCamera(videoEl);
 
