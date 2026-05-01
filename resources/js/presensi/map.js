@@ -17,14 +17,14 @@ export function initMap(containerId, lat, lng, radius, pklLat = null, pklLng = n
         fillOpacity: 0.2
     }).addTo(map);
 
-    // 🔴 ICON PKL (MERAH)
+    // ICON PKL 
     const pklIcon = L.icon({
         iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
         iconSize: [30, 30],
         iconAnchor: [15, 30]
     });
 
-    // 🔵 ICON USER (BIRU)
+    // ICON USER 
     const userIcon = L.icon({
         iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
         iconSize: [30, 30],
