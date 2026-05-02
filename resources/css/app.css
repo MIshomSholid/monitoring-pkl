@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Marker Siswa */
+.marker-blue {
+    filter: hue-rotate(200deg) saturate(2);
+}
+
+/* Marker PKL */
+.marker-red {
+    filter: hue-rotate(0deg) saturate(2);
+}
