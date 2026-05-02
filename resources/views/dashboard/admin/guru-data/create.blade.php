@@ -3,7 +3,7 @@
 @section('content')
 <h1 class="text-2xl font-bold mb-6">Tambah Data Guru Pembimbing</h1>
 
-<div class="bg-white border rounded-lg p-6 max-w-3xl">
+<div class="bg-white border rounded-lg p-6 max-w-xl">
     <form method="POST"
           action="{{ route('admin.guru.store') }}"
           enctype="multipart/form-data">
