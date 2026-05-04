@@ -173,6 +173,8 @@ class PresensiController extends Controller
         $request->validate([
             'keterangan_izin' => 'required|string',
             'bukti_izin' => 'nullable|file|mimes:jpg,png,pdf|max:2048',
+        ], [
+            'bukti_izin.max' => 'Ukuran file terlalu besar! Maksimal 2MB.',
         ]);
 
         $penempatan = $this->getPenempatanAktifAtauGagal();
@@ -287,7 +289,7 @@ class PresensiController extends Controller
     private function broadcastPresensi($presensi, $penempatan)
     {
         $url = config('services.realtime.url') . '/broadcast';
-        
+
         $response = Http::timeout(3)
             ->retry(2, 100)
             ->post($url, [
@@ -312,7 +314,7 @@ class PresensiController extends Controller
                     'pembimbing_user_id' => optional($penempatan->pembimbingLapangan)->user_id,
                 ]
             ]);
- 
+
         if (!$response->successful()) {
             \Log::error('Realtime broadcast gagal', [
                 'status' => $response->status(),
