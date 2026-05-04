@@ -174,6 +174,12 @@
                 window.stopPresensiHadir();
             }
         };
+
+        @if ($errors->any())
+            window.addEventListener('DOMContentLoaded', function () {
+                showIzin();
+            });
+        @endif
     </script>
 
 @endsection
