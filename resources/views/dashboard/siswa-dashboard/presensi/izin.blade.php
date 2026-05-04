@@ -1,9 +1,26 @@
 @if ($errors->any())
-    <div id="toast-error" class="fixed top-5 right-5 flex items-center gap-2 bg-red-600 text-white px-5 py-3 rounded-lg shadow-lg 
-            transform translate-x-[120%] opacity-0 transition-all duration-500 ease-in-out z-50">
+    <div id="toast-error"
+        class="fixed top-6 right-6 z-50 transform translate-x-full
+        bg-white border border-red-200 shadow-xl rounded-xl
+        p-4 w-80 flex items-start gap-3">
 
-        <span>❌</span>
-        <span>{{ $errors->first() }}</span>
+        {{-- garis kiri --}}
+        <div class="flex-shrink-0 w-2 h-10 bg-red-500 rounded-full"></div>
+
+        {{-- isi --}}
+        <div class="flex-1">
+            <p class="text-sm font-semibold text-gray-800">
+                Gagal Mengirim
+            </p>
+            <p class="text-sm text-gray-600 mt-1">
+                {{ $errors->first() }}
+            </p>
+        </div>
+
+        {{-- tombol close --}}
+        <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">
+            ×
+        </button>
     </div>
 @endif
 
@@ -71,27 +88,33 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toast = document.getElementById('toast-error');
+document.addEventListener("DOMContentLoaded", function () {
+    const toast = document.getElementById('toast-error');
 
-        if (toast) {
+    if (toast) {
 
-            // MASUK (dari kanan)
-            setTimeout(() => {
-                toast.classList.remove('translate-x-[120%]', 'opacity-0');
-                toast.classList.add('translate-x-0', 'opacity-100');
-            }, 100);
+        // SLIDE IN (kanan → masuk)
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+            toast.classList.add('translate-x-0');
+            toast.style.transition = "all 0.4s ease";
+        }, 100);
 
-            // KELUAR (lebih smooth)
-            setTimeout(() => {
-                toast.style.transform = 'translateX(-120%)';
-                toast.style.opacity = '0';
-            }, 3000);
+        // AUTO CLOSE (5 detik biar konsisten)
+        setTimeout(closeToast, 5000);
+    }
+});
 
-            // HAPUS
-            setTimeout(() => {
-                toast.remove();
-            }, 3600);
-        }
-    });
+function closeToast() {
+    const toast = document.getElementById('toast-error');
+    if (!toast) return;
+
+    toast.classList.remove('translate-x-0');
+    toast.classList.add('translate-x-full');
+    toast.style.transition = "all 0.4s ease";
+
+    setTimeout(() => {
+        toast.remove();
+    }, 400);
+}
 </script>
