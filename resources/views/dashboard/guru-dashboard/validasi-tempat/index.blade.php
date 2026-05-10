@@ -111,7 +111,7 @@
                                     </button>
                                 @else
                                     <button type="submit"
-                                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg transition">
+                                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded transition">
                                         Simpan
                                     </button>
                                 @endif
