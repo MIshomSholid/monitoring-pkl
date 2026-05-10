@@ -252,17 +252,17 @@
                             @if($p->laporanAkhir)
 
                                 @if($p->laporanAkhir->status_validasi == 'menunggu')
-                                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">
+                                    <span class="px-3 py-1 text-xs rounded bg-yellow-100 text-yellow-700">
                                         Menunggu
                                     </span>
 
                                 @elseif($p->laporanAkhir->status_validasi == 'diterima')
-                                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                                    <span class="px-3 py-1 text-xs rounded bg-green-100 text-green-700">
                                         Disetujui
                                     </span>
 
                                 @else
-                                    <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                                    <span class="px-3 py-1 text-xs rounded bg-red-100 text-red-700">
                                         Ditolak
                                     </span>
                                 @endif

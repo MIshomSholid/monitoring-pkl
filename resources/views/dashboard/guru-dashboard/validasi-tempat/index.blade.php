@@ -63,19 +63,19 @@
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            <span class="px-3 py-1 text-xs rounded-full {{ $statusClass }}">
+                            <span class="px-3 py-1 text-xs rounded {{ $statusClass }}">
                                 {{ ucfirst($item->status) }}
                             </span>
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            <span class="px-3 py-1 text-xs rounded-full {{ $pengajuanClass }}">
+                            <span class="px-3 py-1 text-xs rounded {{ $pengajuanClass }}">
                                 {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
                             </span>
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            <span class="px-3 py-1 text-xs rounded-full {{ $validasiClass }}">
+                            <span class="px-3 py-1 text-xs rounded {{ $validasiClass }}">
                                 {{ ucfirst($current) }}
                             </span>
                         </td>
