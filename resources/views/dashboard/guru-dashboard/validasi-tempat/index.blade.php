@@ -86,7 +86,7 @@
                                 @csrf
 
                                 <select name="status_validasi"
-                                        class="border rounded-lg px-2 py-2 text-xs mb-2 w-full
+                                        class="border rounded px-2 py-2 text-xs mb-2 w-full
                                                {{ $disabled ? 'bg-gray-100 cursor-not-allowed' : '' }}"
                                         {{ $disabled ? 'disabled' : '' }}>
                                     <option value="diterima"
@@ -101,12 +101,12 @@
 
                                 @if (empty($item->status_pengajuan))
                                     <button type="button" disabled
-                                            class="w-full bg-gray-300 text-gray-500 text-xs px-3 py-2 rounded-lg cursor-not-allowed">
+                                            class="w-full bg-gray-300 text-gray-500 text-xs px-3 py-2 rounded cursor-not-allowed">
                                         Tidak Ada Pengajuan
                                     </button>
                                 @elseif ($item->status_validasi === 'diterima')
                                     <button type="button" disabled
-                                            class="w-full bg-gray-400 text-white text-xs px-3 py-2 rounded-lg cursor-not-allowed">
+                                            class="w-full bg-gray-400 text-white text-xs px-3 py-2 rounded cursor-not-allowed">
                                         Sudah Disetujui
                                     </button>
                                 @else

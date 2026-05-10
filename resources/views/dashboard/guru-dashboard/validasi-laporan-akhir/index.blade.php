@@ -332,7 +332,7 @@
 
                         @csrf
 
-                        <select name="status_validasi" class="border rounded-lg px-3 py-2 text-sm mb-3 w-full">
+                        <select name="status_validasi" class="border rounded px-3 py-2 text-sm mb-3 w-full">
 
                             <option value="menunggu" {{ $currentStatus == 'menunggu' ? 'selected' : '' }}>
                                 Menunggu
@@ -348,7 +348,7 @@
 
                         </select>
 
-                        <textarea name="catatan_validasi" class="border rounded-lg px-3 py-2 text-sm w-full mb-3" rows="3"
+                        <textarea name="catatan_validasi" class="border rounded px-3 py-2 text-sm w-full mb-3" rows="3"
                             placeholder="Catatan validasi (opsional)"></textarea>
 
                         <button
