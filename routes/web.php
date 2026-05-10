@@ -269,7 +269,10 @@ Route::middleware(['auth', 'check.active'])
         Route::get('/laporan-akhir', [LaporanAkhirController::class, 'index'])
             ->name('laporan-akhir.index');
 
-        Route::match(['get', 'post'], '/laporan-akhir/preview', [LaporanAkhirController::class, 'preview'])
+        Route::get('/laporan-akhir/preview', [LaporanAkhirController::class, 'preview'])
+            ->name('laporan-akhir.preview');
+
+        Route::post('/laporan-akhir/preview', [LaporanAkhirController::class, 'preview'])
             ->name('laporan-akhir.preview');
 
         Route::post('/laporan-akhir/export', [LaporanAkhirController::class, 'exportPdf'])
