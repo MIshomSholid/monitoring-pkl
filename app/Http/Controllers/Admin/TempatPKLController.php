@@ -10,9 +10,9 @@ class TempatPKLController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TempatPkl::query();
+        $query = TempatPkl::with('penempatanPkl');
 
-        // 🔍 SEARCH
+        // SEARCH
         if ($request->filled('search')) {
             $search = $request->search;
 
@@ -91,18 +91,18 @@ class TempatPKLController extends Controller
         ]);
 
         $tempatPkl->update([
-        'nama_perusahaan' => $request->nama_perusahaan,
-        'alamat' => $request->alamat,
-        'latitude' => $request->latitude,
-        'longitude' => $request->longitude,
-        'radius_meter' => $request->radius_meter,
-        'kuota_siswa' => $request->kuota_siswa,
+            'nama_perusahaan' => $request->nama_perusahaan,
+            'alamat' => $request->alamat,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'radius_meter' => $request->radius_meter,
+            'kuota_siswa' => $request->kuota_siswa,
 
-        // ✅ UPDATE SETTING PRESENSI
-        'jam_masuk' => $request->jam_masuk,
-        'toleransi_keterlambatan' => $request->toleransi_keterlambatan,
-        'hari_wajib' => $request->hari_wajib,
-    ]);
+            // ✅ UPDATE SETTING PRESENSI
+            'jam_masuk' => $request->jam_masuk,
+            'toleransi_keterlambatan' => $request->toleransi_keterlambatan,
+            'hari_wajib' => $request->hari_wajib,
+        ]);
 
         return redirect()
             ->route('admin.tempat-pkl.index')
@@ -111,8 +111,29 @@ class TempatPKLController extends Controller
 
     public function destroy(TempatPkl $tempatPkl)
     {
+        /**
+         * Cek apakah masih dipakai siswa aktif
+         */
+        $masihDipakai = $tempatPkl->penempatanPkl()
+            ->where('status', 'aktif')
+            ->exists();
+
+        if ($masihDipakai) {
+            return back()->with(
+                'error',
+                'Tempat PKL tidak dapat dihapus karena masih digunakan siswa aktif.'
+            );
+        }
+
+        /**
+         * Jika tidak dipakai
+         * maka boleh dihapus
+         */
         $tempatPkl->delete();
 
-        return back()->with('success', 'Tempat PKL dihapus');
+        return back()->with(
+            'success',
+            'Tempat PKL berhasil dihapus.'
+        );
     }
 }
