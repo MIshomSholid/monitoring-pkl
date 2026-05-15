@@ -164,12 +164,36 @@ class LaporanAkhirController extends Controller
         /**
          * Nama ZIP
          */
-        $zipFileName = 'Laporan-PKL-' . time() . '.zip';
+        $jenisLabel = match ($request->jenis_laporan) {
+            'presensi' => 'Rekap-Presensi',
+            'nilai' => 'Rekap-Nilai',
+            'akhir' => 'Rekap-Laporan-Akhir',
+        };
+
+        $periode = PeriodePkl::findOrFail($request->periode_pkl_id);
+
+        $namaPeriode = str_replace(
+            [' ', '/'],
+            ['-', '-'],
+            $periode->nama_periode
+        );
+
+        $zipFileName = 'Laporan-PKL-' .
+            $jenisLabel . '-' .
+            $namaPeriode .
+            '.zip';
+
         $zipPath = storage_path('app/' . $zipFileName);
 
         $zip = new ZipArchive;
 
         if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+
+            $jenisPdf = match ($request->jenis_laporan) {
+                'presensi' => 'Presensi',
+                'nilai' => 'Nilai',
+                'akhir' => 'Laporan-Akhir',
+            };
 
             foreach ($penempatanList as $penempatan) {
 
@@ -199,6 +223,7 @@ class LaporanAkhirController extends Controller
                 $nis = str_replace('/', '_', $penempatan->siswa->nis);
 
                 $pdfName = 'Laporan-' .
+                    $jenisPdf . '-' .
                     $nis . '-' .
                     str_replace(' ', '_', $penempatan->siswa->nama_lengkap)
                     . '.pdf';
