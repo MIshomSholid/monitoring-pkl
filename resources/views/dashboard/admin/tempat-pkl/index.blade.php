@@ -2,50 +2,26 @@
 
 @section('content')
 
-    {{-- TOAST SUCCESS --}}
-    @if(session('success'))
-        <div id="toast-success" class="fixed top-6 right-6 z-50 translate-x-full
-                    bg-white border border-green-200 shadow-xl rounded-xl
-                    p-4 w-80 flex items-start gap-3 transition-all duration-500">
-
-            <div class="text-green-600 text-xl">✔</div>
-
-            <div class="flex-1">
-                <h4 class="font-semibold text-gray-800">
-                    Berhasil
-                </h4>
-
-                <p class="text-sm text-gray-600">
-                    {{ session('success') }}
-                </p>
-            </div>
-
-            <button onclick="closeToast('toast-success')" class="text-gray-400 hover:text-gray-600">
-                ✕
-            </button>
-        </div>
-    @endif
-
     {{-- TOAST ERROR --}}
     @if(session('error'))
-        <div id="toast-error" class="fixed top-6 right-6 z-50 translate-x-full
-                    bg-white border border-red-200 shadow-xl rounded-xl
-                    p-4 w-80 flex items-start gap-3 transition-all duration-500">
+        <div id="error-toast" class="fixed top-6 right-6 z-50 transform translate-x-full
+                               bg-white border border-red-200 shadow-xl rounded-xl
+                               p-4 w-80 flex items-start gap-3">
 
-            <div class="text-red-600 text-xl">⚠</div>
+            <div class="flex-shrink-0 w-2 h-10 bg-red-500 rounded-full"></div>
 
             <div class="flex-1">
-                <h4 class="font-semibold text-gray-800">
-                    Gagal
-                </h4>
+                <p class="text-sm font-semibold text-gray-800">
+                    Gagal Menghapus
+                </p>
 
-                <p class="text-sm text-gray-600">
+                <p class="text-sm text-gray-600 mt-1">
                     {{ session('error') }}
                 </p>
             </div>
 
-            <button onclick="closeToast('toast-error')" class="text-gray-400 hover:text-gray-600">
-                ✕
+            <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">
+                ×
             </button>
         </div>
     @endif
@@ -248,31 +224,32 @@
 
         </div>
     </div>
+
     <script>
-        function showToast(id) {
-            const toast = document.getElementById(id);
+        const toast = document.getElementById('error-toast');
 
-            if (toast) {
-                setTimeout(() => {
-                    toast.classList.remove('translate-x-full');
-                }, 100);
+        if (toast) {
 
-                setTimeout(() => {
-                    closeToast(id);
-                }, 5000);
-            }
-        }
+            // Slide In
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+                toast.classList.add('translate-x-0');
+                toast.style.transition = "all 0.4s ease";
+            }, 100);
 
-        function closeToast(id) {
-            const toast = document.getElementById(id);
+            // Auto Close
+            setTimeout(closeToast, 5000);
 
-            if (toast) {
+            function closeToast() {
+                toast.classList.remove('translate-x-0');
                 toast.classList.add('translate-x-full');
+                toast.style.transition = "all 0.4s ease";
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
             }
         }
-
-        showToast('toast-success');
-        showToast('toast-error');
     </script>
 
 @endsection
