@@ -196,8 +196,10 @@ class LaporanAkhirController extends Controller
                 /**
                  * Nama file PDF
                  */
+                $nis = str_replace('/', '_', $penempatan->siswa->nis);
+
                 $pdfName = 'Laporan-' .
-                    $penempatan->siswa->nis . '-' .
+                    $nis . '-' .
                     str_replace(' ', '_', $penempatan->siswa->nama_lengkap)
                     . '.pdf';
 
