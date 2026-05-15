@@ -100,16 +100,20 @@
 
         $rataTotal = round(($rataTeknis + $rataNonTeknis) / 2, 2);
 
-        function konversiHuruf($nilai)
-        {
-            if ($nilai >= 92)
-                return 'A';
-            elseif ($nilai >= 82)
-                return 'B';
-            elseif ($nilai >= 75)
-                return 'C';
-            else
-                return 'D';
+        if (!function_exists('konversiHuruf')) {
+
+            function konversiHuruf($nilai)
+            {
+                if ($nilai >= 92)
+                    return 'A';
+                elseif ($nilai >= 82)
+                    return 'B';
+                elseif ($nilai >= 75)
+                    return 'C';
+                else
+                    return 'D';
+            }
+
         }
     @endphp
 
