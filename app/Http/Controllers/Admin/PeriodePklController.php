@@ -166,14 +166,28 @@ class PeriodePklController extends Controller
 
     public function destroy(PeriodePkl $periode)
     {
-        if ($periode->penempatanPkl()->exists()) {
-            return back()->with('error', 'Periode tidak bisa dihapus karena sudah digunakan');
+        /**
+         * Cek apakah periode masih dipakai
+         */
+        $masihDipakai = $periode->penempatanPkl()->exists();
+
+        if ($masihDipakai) {
+
+            return back()->with(
+                'error',
+                'Periode PKL tidak dapat dihapus karena masih digunakan siswa.'
+            );
         }
 
+        /**
+         * Jika tidak dipakai
+         * maka boleh dihapus
+         */
         $periode->delete();
 
-        return redirect()
-            ->route('admin.periode.index')
-            ->with('success', 'Periode berhasil dihapus');
+        return back()->with(
+            'success',
+            'Periode PKL berhasil dihapus.'
+        );
     }
 }

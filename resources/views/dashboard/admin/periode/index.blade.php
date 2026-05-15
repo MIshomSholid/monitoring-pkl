@@ -1,6 +1,31 @@
 @extends('dashboard.admin.layout')
 
 @section('content')
+
+    {{-- TOAST ERROR --}}
+    @if(session('error'))
+        <div id="error-toast" class="fixed top-6 right-6 z-50 transform translate-x-full
+                               bg-white border border-red-200 shadow-xl rounded-xl
+                               p-4 w-80 flex items-start gap-3">
+
+            <div class="flex-shrink-0 w-2 h-10 bg-red-500 rounded-full"></div>
+
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-800">
+                    Gagal Menghapus
+                </p>
+
+                <p class="text-sm text-gray-600 mt-1">
+                    {{ session('error') }}
+                </p>
+            </div>
+
+            <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">
+                ×
+            </button>
+        </div>
+    @endif
+
     <div class="p-6 bg-gray-50 min-h-screen">
         <div class="flex flex-col gap-4">
 
@@ -11,9 +36,9 @@
                 </h1>
 
                 <a href="{{ route('admin.periode.create') }}" class="inline-flex items-center justify-center
-                              px-4 py-2 text-sm
-                              bg-indigo-600 text-white rounded-md
-                              hover:bg-indigo-700">
+                                      px-4 py-2 text-sm
+                                      bg-indigo-600 text-white rounded-md
+                                      hover:bg-indigo-700">
                     + Tambah Periode
                 </a>
             </div>
@@ -24,9 +49,9 @@
 
                     {{-- FILTER STATUS --}}
                     <select name="status" class="w-full sm:w-48
-                                       border rounded px-3 py-2
-                                       text-sm
-                                       focus:ring focus:ring-indigo-200">
+                                               border rounded px-3 py-2
+                                               text-sm
+                                               focus:ring focus:ring-indigo-200">
                         <option value="">Semua Status</option>
                         <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>
                             Aktif
@@ -37,15 +62,15 @@
                     </select>
 
                     <button type="submit" class="px-4 py-2
-                                       bg-indigo-600 text-white rounded
-                                       hover:bg-indigo-700 text-sm">
+                                               bg-indigo-600 text-white rounded
+                                               hover:bg-indigo-700 text-sm">
                         Filter
                     </button>
 
                     <a href="{{ route('admin.periode.index') }}" class="w-full sm:w-auto
-                          px-4 py-2 text-sm
-                          bg-gray-200 text-gray-700 rounded-md
-                          text-sm hover:bg-gray-300">
+                                  px-4 py-2 text-sm
+                                  bg-gray-200 text-gray-700 rounded-md
+                                  text-sm hover:bg-gray-300">
                         Reset
                     </a>
                 </form>
@@ -88,7 +113,7 @@
 
                                             <td class="px-4 py-3">
                                                 <span class="px-2 py-1 text-xs rounded
-                                                                                        {{ $item->is_active
+                                                                                                                                {{ $item->is_active
                             ? 'bg-green-100 text-green-700'
                             : 'bg-red-100 text-red-700' }}">
                                                     {{ $item->is_active ? 'Aktif' : 'Nonaktif' }}
@@ -157,7 +182,7 @@
                             @endif
 
                             <span class="inline-block px-2 py-1 text-xs rounded
-                                                    {{ $item->is_active
+                                                                            {{ $item->is_active
                     ? 'bg-green-100 text-green-700'
                     : 'bg-red-100 text-red-700' }}">
                                 {{ $item->is_active ? 'Aktif' : 'Nonaktif' }}
@@ -196,4 +221,31 @@
 
         </div>
     </div>
+
+    <script>
+        const toast = document.getElementById('error-toast');
+
+        if (toast) {
+
+            // Slide In
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+                toast.classList.add('translate-x-0');
+                toast.style.transition = "all 0.4s ease";
+            }, 100);
+
+            // Auto Close
+            setTimeout(closeToast, 5000);
+
+            function closeToast() {
+                toast.classList.remove('translate-x-0');
+                toast.classList.add('translate-x-full');
+                toast.style.transition = "all 0.4s ease";
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }
+        }
+    </script>
 @endsection
