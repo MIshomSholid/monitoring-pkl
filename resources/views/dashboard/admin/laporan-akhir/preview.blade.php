@@ -102,7 +102,7 @@
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            <span class="px-3 py-1 text-xs rounded-full {{ $bgStatus }}">
+                            <span class="px-3 py-1 text-xs rounded {{ $bgStatus }}">
                                 {{ ucfirst($status) }}
                             </span>
                         </td>
@@ -183,7 +183,7 @@
                         </p>
                     </div>
 
-                    <span class="px-3 py-1 text-xs rounded-full {{ $bgStatus }}">
+                    <span class="px-3 py-1 text-xs rounded {{ $bgStatus }}">
                         {{ ucfirst($status) }}
                     </span>
 
