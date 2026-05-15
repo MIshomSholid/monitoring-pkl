@@ -112,11 +112,11 @@ Route::middleware(['auth', 'check.active'])
         Route::resource('/users', UserController::class);
 
         // ================= DATA ADMIN =================
-
+    
         //Data Admin
         Route::get('/admin-data', [AdminDataController::class, 'index'])
             ->name('admin-data.index');
-    
+
         // CREATE
         Route::get('/admin-data/create', [AdminDataController::class, 'create'])
             ->name('admin-data.create');
@@ -274,6 +274,9 @@ Route::middleware(['auth', 'check.active'])
 
         Route::post('/laporan-akhir/export', [LaporanAkhirController::class, 'exportPdf'])
             ->name('laporan-akhir.export');
+
+        Route::post('/laporan-akhir/export-all', [LaporanAkhirController::class, 'exportAllPdf'])
+            ->name('laporan-akhir.export-all');
 
         Route::get('/kpi-bobot', [KpiBobotController::class, 'index'])
             ->name('kpi-bobot');

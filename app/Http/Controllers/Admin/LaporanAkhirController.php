@@ -8,6 +8,8 @@ use App\Models\PeriodePkl;
 use App\Models\PenempatanPkl;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use ZipArchive;
+use Illuminate\Support\Facades\File;
 
 class LaporanAkhirController extends Controller
 {
@@ -32,7 +34,7 @@ class LaporanAkhirController extends Controller
     {
         $request->validate([
             'periode_pkl_id' => 'required|exists:periode_pkl,id',
-            'jenis_laporan'  => 'required|in:presensi,nilai,akhir'
+            'jenis_laporan' => 'required|in:presensi,nilai,akhir'
         ]);
 
         $penempatan = PenempatanPkl::with([
@@ -40,15 +42,18 @@ class LaporanAkhirController extends Controller
             'tempat',
             'guru',
             'pembimbingLapangan',
-            'laporanAkhir' // 🔥 penting untuk cek status validasi guru
+            'laporanAkhir'
         ])
-        ->where('periode_pkl_id', $request->periode_pkl_id)
-        ->get();
+            ->where('periode_pkl_id', $request->periode_pkl_id)
+            ->whereHas('laporanAkhir', function ($q) {
+                $q->where('status_validasi', 'diterima');
+            })
+            ->get();
 
         return view('dashboard.admin.laporan-akhir.preview', [
             'penempatan' => $penempatan,
-            'periode'    => PeriodePkl::findOrFail($request->periode_pkl_id),
-            'jenis'      => $request->jenis_laporan
+            'periode' => PeriodePkl::findOrFail($request->periode_pkl_id),
+            'jenis' => $request->jenis_laporan
         ]);
     }
 
@@ -112,5 +117,111 @@ class LaporanAkhirController extends Controller
             'Laporan-PKL-' . str_replace(' ', '_', $penempatan->siswa->nama_lengkap) . '.pdf',
             ['Attachment' => true]
         );
+    }
+
+    /**
+     * ===============================
+     * EXPORT SEMUA PDF PER PERIODE
+     * ===============================
+     */
+    public function exportAllPdf(Request $request)
+    {
+        $request->validate([
+            'periode_pkl_id' => 'required|exists:periode_pkl,id',
+            'jenis_laporan' => 'required|in:presensi,nilai,akhir'
+        ]);
+
+        /**
+         * Ambil semua penempatan
+         * yang SUDAH disetujui guru
+         */
+        $penempatanList = PenempatanPkl::with([
+            'siswa',
+            'tempat',
+            'guru',
+            'pembimbingLapangan',
+            'laporanAkhir',
+            'presensi',
+            'laporanKegiatan',
+            'penilaianKpi.indikator.kategori'
+        ])
+            ->where('periode_pkl_id', $request->periode_pkl_id)
+            ->whereHas('laporanAkhir', function ($q) {
+                $q->where('status_validasi', 'diterima');
+            })
+            ->get();
+
+        if ($penempatanList->isEmpty()) {
+            return back()->with('error', 'Tidak ada laporan yang disetujui.');
+        }
+
+        /**
+         * Folder temporary
+         */
+        $tempPath = storage_path('app/temp-pdf-' . time());
+
+        if (!File::exists($tempPath)) {
+            File::makeDirectory($tempPath, 0755, true);
+        }
+
+        /**
+         * Nama ZIP
+         */
+        $zipFileName = 'Laporan-PKL-' . time() . '.zip';
+        $zipPath = storage_path('app/' . $zipFileName);
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+
+            foreach ($penempatanList as $penempatan) {
+
+                /**
+                 * DOMPDF
+                 */
+                $options = new Options();
+                $options->set('defaultFont', 'DejaVu Sans');
+                $options->set('isRemoteEnabled', true);
+
+                $dompdf = new Dompdf($options);
+
+                $html = view(
+                    'dashboard.admin.laporan-akhir.pdf.' . $request->jenis_laporan,
+                    [
+                        'penempatan' => $penempatan
+                    ]
+                )->render();
+
+                $dompdf->loadHtml($html);
+                $dompdf->setPaper('A4', 'portrait');
+                $dompdf->render();
+
+                /**
+                 * Nama file PDF
+                 */
+                $pdfName = 'Laporan-' .
+                    $penempatan->siswa->nis . '-' .
+                    str_replace(' ', '_', $penempatan->siswa->nama_lengkap)
+                    . '.pdf';
+
+                $pdfPath = $tempPath . '/' . $pdfName;
+
+                file_put_contents($pdfPath, $dompdf->output());
+
+                /**
+                 * Masukkan ke ZIP
+                 */
+                $zip->addFile($pdfPath, $pdfName);
+            }
+
+            $zip->close();
+        }
+
+        File::deleteDirectory($tempPath);
+
+        /**
+         * Hapus temporary setelah download
+         */
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }

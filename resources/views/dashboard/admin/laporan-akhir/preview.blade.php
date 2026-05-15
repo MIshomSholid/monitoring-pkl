@@ -3,15 +3,33 @@
 @section('content')
 
     {{-- ================= HEADER ================= --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <h1 class="text-2xl font-bold">
             Preview Laporan Akhir PKL
         </h1>
 
-        <a href="{{ route('admin.laporan-akhir.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700
-                   rounded-md text-sm hover:bg-gray-300 transition">
-            Kembali
-        </a>
+        <div class="flex gap-2">
+
+            <a href="{{ route('admin.laporan-akhir.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700
+           rounded-md text-sm hover:bg-gray-300 transition">
+                Kembali
+            </a>
+
+            <form method="POST" action="{{ route('admin.laporan-akhir.export-all') }}">
+                @csrf
+
+                <input type="hidden" name="periode_pkl_id" value="{{ $periode->id }}">
+
+                <input type="hidden" name="jenis_laporan" value="{{ $jenis }}">
+
+                <button class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white
+                rounded-md text-sm hover:bg-indigo-700 transition">
+
+                    Download Semua PDF
+                </button>
+            </form>
+
+        </div>
     </div>
 
     {{-- ================= RINGKASAN ================= --}}
