@@ -45,9 +45,6 @@ class LaporanAkhirController extends Controller
             'laporanAkhir'
         ])
             ->where('periode_pkl_id', $request->periode_pkl_id)
-            ->whereHas('laporanAkhir', function ($q) {
-                $q->where('status_validasi', 'diterima');
-            })
             ->get();
 
         return view('dashboard.admin.laporan-akhir.preview', [
