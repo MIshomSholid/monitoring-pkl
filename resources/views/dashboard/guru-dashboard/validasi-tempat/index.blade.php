@@ -168,7 +168,7 @@
                         </p>
                     </div>
 
-                    <span class="px-3 py-1 text-xs rounded-full {{ $validasiClass }} shrink-0">
+                    <span class="px-3 py-1 text-xs rounded {{ $validasiClass }} shrink-0">
                         {{ ucfirst($current) }}
                     </span>
                 </div>
@@ -177,14 +177,14 @@
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <div class="bg-gray-50 rounded-xl p-3">
                         <div class="text-xs text-gray-500 mb-1">Status Saat Ini</div>
-                        <span class="px-3 py-1 text-xs rounded-full {{ $statusClass }}">
+                        <span class="px-3 py-1 text-xs rounded {{ $statusClass }}">
                             {{ ucfirst($item->status) }}
                         </span>
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-3">
                         <div class="text-xs text-gray-500 mb-1">Pengajuan</div>
-                        <span class="px-3 py-1 text-xs rounded-full {{ $pengajuanClass }}">
+                        <span class="px-3 py-1 text-xs rounded {{ $pengajuanClass }}">
                             {{ $item->status_pengajuan ? ucfirst($item->status_pengajuan) : '-' }}
                         </span>
                     </div>
