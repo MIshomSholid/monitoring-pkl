@@ -103,8 +103,8 @@
                                             </td>
 
                                             <td class="px-4 py-3">
-                                                {{ $item->tanggal_mulai->format('d M Y') }} –
-                                                {{ $item->tanggal_selesai->format('d M Y') }}
+                                                {{ $item->tanggal_mulai?->format('d M Y') ?? '-' }} –
+                                                {{ $item->tanggal_selesai?->format('d M Y') ?? '-' }}
                                             </td>
 
                                             <td class="px-4 py-3 text-gray-700">
@@ -170,8 +170,8 @@
 
                             <div class="text-gray-700">
                                 <span class="font-medium">Tanggal:</span><br>
-                                {{ $item->tanggal_mulai->format('d M Y') }} –
-                                {{ $item->tanggal_selesai->format('d M Y') }}
+                                {{ $item->tanggal_mulai?->format('d M Y') ?? '-' }} –
+                                {{ $item->tanggal_selesai?->format('d M Y') ?? '-' }}
                             </div>
 
                             @if($item->keterangan)

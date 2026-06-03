@@ -59,7 +59,7 @@
                 <label class="block text-sm font-medium mb-1">Tanggal Mulai</label>
 
                 <input type="date" name="tanggal_mulai"
-                    value="{{ old('tanggal_mulai', $periode->tanggal_mulai->format('Y-m-d')) }}"
+                    value="{{ old('tanggal_mulai', $periode->tanggal_mulai?->format('Y-m-d')) }}"
                     min="{{ $minDate }}"
                     class="w-full border rounded px-3 py-2
                     @error('tanggal_mulai') border-red-500 @enderror" required>
@@ -71,8 +71,9 @@
                 <label class="block text-sm font-medium mb-1">Tanggal Selesai</label>
 
                 <input type="date" name="tanggal_selesai"
-                    value="{{ old('tanggal_selesai', $periode->tanggal_selesai->format('Y-m-d')) }}" class="w-full border rounded px-3 py-2
-                      @error('tanggal_selesai') border-red-500 @enderror" required>
+                    value="{{ old('tanggal_selesai', $periode->tanggal_selesai?->format('Y-m-d')) }}" 
+                    class="w-full border rounded px-3 py-2
+                    @error('tanggal_selesai') border-red-500 @enderror" required>
             </div>
 
 
