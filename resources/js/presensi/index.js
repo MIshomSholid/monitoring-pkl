@@ -22,7 +22,7 @@ window.startPresensiHadir = function () {
         return;
     }
 
-    // 🔥 GUARD ELEMENT UI
+    // GUARD ELEMENT UI
     if (
         !latitudeInput ||
         !longitudeInput ||
@@ -38,7 +38,7 @@ window.startPresensiHadir = function () {
     const PKL_LNG = parseFloat(data.dataset.lng);
     const PKL_RADIUS = parseFloat(data.dataset.radius);
 
-    // 🔥 TAMBAHAN PENTING (ANTI NaN)
+    // TAMBAHAN PENTING (ANTI NaN)
     if (isNaN(PKL_LAT) || isNaN(PKL_LNG)) {
         console.warn("Koordinat PKL tidak valid");
         return;

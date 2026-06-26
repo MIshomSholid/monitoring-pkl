@@ -17,7 +17,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite([
+    'resources/css/app.css', 
+    'resources/js/app.js'
+    ])
 
     <style>
         [x-cloak] {

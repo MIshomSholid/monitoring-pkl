@@ -50,7 +50,7 @@
 <script>
     window.ambilFoto = function () {
 
-        // ⛔ PENGAMAN UTAMA
+        // PENGAMAN UTAMA
         if (!window.isDalamRadius) {
             alert('Presensi ditolak: Anda berada di luar radius lokasi PKL.');
             return;

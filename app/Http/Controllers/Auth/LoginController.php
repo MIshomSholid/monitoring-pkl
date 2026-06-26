@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+//Tidak Dipakai, karena sudah menggunakan AuthenticatedSessionController.php
+
 class LoginController extends Controller
 {
     public function showLogin()
