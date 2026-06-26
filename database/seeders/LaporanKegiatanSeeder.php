@@ -1,0 +1,266 @@
+<?php
+
+
+
+namespace Database\Seeders;
+
+
+
+use Illuminate\Database\Seeder;
+
+use App\Models\Presensi;
+
+use App\Models\LaporanKegiatan;
+
+use Carbon\Carbon;
+
+
+
+class LaporanKegiatanSeeder extends Seeder
+{
+
+    /**
+
+     * File bukti default
+
+     */
+
+    private string $fileBukti = 'storage/laporan/laporan.png';
+
+
+
+    /**
+
+     * Jalankan Seeder
+
+     */
+
+    public function run(): void
+    {
+
+        /**
+
+         * Ambil semua presensi HADIR
+
+         */
+
+        $presensi = Presensi::where('jenis_presensi', 'hadir')
+
+            ->whereBetween('tanggal', [
+
+                Carbon::create(2026, 6, 1)->toDateString(),
+
+                Carbon::create(2026, 7, 3)->toDateString(),
+
+            ])
+
+            ->orderBy('penempatan_pkl_id')
+
+            ->orderBy('tanggal')
+
+            ->get()
+
+            ->groupBy('penempatan_pkl_id');
+
+
+
+        foreach ($presensi as $penempatanId => $dataPresensi) {
+
+
+
+            /**
+
+             * Kelompokkan per minggu
+
+             */
+
+            $mingguan = [];
+
+
+
+            foreach ($dataPresensi as $item) {
+
+
+
+                $week = Carbon::parse($item->tanggal)->weekOfYear;
+
+
+
+                $mingguan[$week][] = $item;
+
+            }
+
+
+
+            /**
+
+             * Tiap minggu maksimal 3 laporan
+
+             */
+
+            foreach ($mingguan as $week => $hari) {
+
+
+
+                shuffle($hari);
+
+
+
+                $hariDipilih = array_slice($hari, 0, min(3, count($hari)));
+
+
+
+                foreach ($hariDipilih as $presensi) {
+
+
+
+                    LaporanKegiatan::updateOrCreate(
+
+
+
+                        [
+
+                            'penempatan_pkl_id' => $presensi->penempatan_pkl_id,
+
+                            'tanggal' => $presensi->tanggal,
+
+                        ],
+
+
+
+                        [
+
+
+
+                            'deskripsi_kegiatan' => $this->generateDeskripsi(),
+
+
+
+                            'file_bukti' => $this->fileBukti,
+
+
+
+                            'status_validasi' => 'diterima',
+
+
+
+                            'catatan_validasi' => 'Laporan sesuai kegiatan PKL.',
+
+
+
+                            'validated_by' => 1,
+
+
+
+                            'validated_at' => now(),
+
+
+
+                        ]
+
+
+
+                    );
+
+
+
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+
+        $this->command->info('Laporan Kegiatan Seeder berhasil dijalankan.');
+
+    }
+
+
+
+    /**
+
+     * Contoh kegiatan
+
+     */
+
+    private function generateDeskripsi(): string
+    {
+
+        $kegiatan = [
+
+
+
+            'Membantu instalasi sistem operasi pada komputer perusahaan.',
+
+
+
+            'Melakukan perawatan dan pembersihan perangkat komputer.',
+
+
+
+            'Membuat dokumentasi hasil pekerjaan harian.',
+
+
+
+            'Membantu konfigurasi jaringan LAN di kantor.',
+
+
+
+            'Melakukan pengecekan perangkat printer dan scanner.',
+
+
+
+            'Membantu proses input data administrasi perusahaan.',
+
+
+
+            'Melakukan backup data pada komputer server.',
+
+
+
+            'Mengikuti briefing bersama pembimbing lapangan.',
+
+
+
+            'Membantu troubleshooting komputer yang mengalami kendala.',
+
+
+
+            'Melakukan instalasi aplikasi pendukung pekerjaan kantor.',
+
+
+
+            'Membantu pengecekan koneksi internet perusahaan.',
+
+
+
+            'Melakukan penggantian perangkat jaringan yang rusak.',
+
+
+
+            'Membuat laporan pekerjaan harian kepada pembimbing.',
+
+
+
+            'Melakukan pengecekan keamanan komputer dari virus.',
+
+
+
+            'Membantu konfigurasi user dan printer sharing.',
+
+
+
+        ];
+
+
+
+        return $kegiatan[array_rand($kegiatan)];
+
+    }
+
+}

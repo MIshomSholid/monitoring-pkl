@@ -48,10 +48,10 @@
                     </a>
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
+                        <!-- <a href="{{ route('register') }}"
                             class="px-5 py-2 bg-slate-800 text-white text-sm font-semibold rounded-md hover:bg-slate-900 transition">
                             Daftar
-                        </a>
+                        </a> -->
                     @endif
                 @endauth
             </div>
