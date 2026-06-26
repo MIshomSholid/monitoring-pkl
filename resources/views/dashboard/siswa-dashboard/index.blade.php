@@ -26,7 +26,7 @@
         <div class="bg-white p-5 rounded-md shadow">
             <p class="text-sm text-gray-500">Nilai KPI</p>
             <p class="mt-2 text-lg font-semibold text-green-600">
-                {{ $totalKpi }} / 100
+                {{ number_format($totalKpi, 2, '.', '') }} / 100
             </p>
         </div>
 
