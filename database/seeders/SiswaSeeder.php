@@ -10,6 +10,8 @@ class SiswaSeeder extends Seeder
 {
     public function run(): void
     {
+        $defaultFotoSiswa = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1782582533/siswa-profil/x52a6pxh6cnuihkwycx2.png';
+
         $siswa = [
 
             [
@@ -218,7 +220,7 @@ class SiswaSeeder extends Seeder
                     'jurusan' => $data['jurusan'],
                     'no_telepon' => $data['no_telepon'],
                     'alamat' => $data['alamat'],
-                    'foto_profil' => 'storage/siswa-profil/siswa.png',
+                    'foto_profil' => $defaultFotoSiswa,
                 ]
             );
         }

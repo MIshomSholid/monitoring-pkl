@@ -10,6 +10,8 @@ class PembimbingLapanganSeeder extends Seeder
 {
     public function run(): void
     {
+        $defaultFotoPembimbing = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1782582693/pembimbing-profil/oltm8a8gjbvwyjzbzird.png';
+
         $pembimbing = [
             [
                 'username' => 'bambang',
@@ -66,7 +68,7 @@ class PembimbingLapanganSeeder extends Seeder
                     'jabatan'          => $data['jabatan'],
                     'no_telepon'       => $data['no_telepon'],
                     'email_perusahaan' => $data['email_perusahaan'],
-                    'foto_profil'      => 'pembimbing-profil/pembimbing.png',
+                    'foto_profil'      => $defaultFotoPembimbing,
                 ]
             );
         }

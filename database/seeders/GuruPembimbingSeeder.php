@@ -10,6 +10,9 @@ class GuruPembimbingSeeder extends Seeder
 {
     public function run(): void
     {
+        // Default foto guru di Cloudinary
+        $defaultFotoGuru = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1782581961/guru-profil/yaoptbpkdq2ye3xt47vc.png';
+
         $guru = [
             [
                 'username' => 'ardiansyah',
@@ -66,7 +69,7 @@ class GuruPembimbingSeeder extends Seeder
                     'nama_lengkap'    => $data['nama_lengkap'],
                     'mata_pelajaran'  => $data['mata_pelajaran'],
                     'no_telepon'      => $data['no_telepon'],
-                    'foto_profil'     => 'guru-profil/gurpem.png',
+                    'foto_profil'     => $defaultFotoGuru,
                 ]
             );
         }
