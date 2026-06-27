@@ -87,9 +87,12 @@
     @php
         $kpi = $penempatan->penilaianKpi->where('status_validasi', 'diterima');
 
-        $teknis = $kpi->filter(function ($item) {
-            return strtolower($item->indikator->kategori->nama_kategori) == 'aspek teknis';
-        });
+        $teknis = $kpi
+            ->filter(function ($item) {
+                return strtolower($item->indikator->kategori->nama_kategori) == 'aspek teknis';
+            })
+            ->sortBy('indikator_id')
+            ->values();
 
         $nonTeknis = $kpi->filter(function ($item) {
             return strtolower($item->indikator->kategori->nama_kategori) == 'aspek non-teknis';
@@ -131,9 +134,9 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($teknis as $index => $k)
+            @forelse($teknis as $k)
                 <tr>
-                    <td class="center">{{ $index + 1 }}</td>
+                    <td class="center">{{ $loop->iteration }}</td>
                     <td>{{ $k->indikator->nama_indikator }}</td>
                     <td class="center">{{ number_format($k->nilai, 0) }}</td>
                     <td class="center">{{ konversiHuruf($k->nilai) }}</td>
@@ -171,20 +174,21 @@
             @php
                 // Kelompokkan berdasarkan indikator lalu reset index
                 $nonTeknisGrouped = $nonTeknis
+                    ->sortBy('indikator_id')
                     ->groupBy(function ($item) {
                         return $item->indikator->nama_indikator;
                     })
                     ->values();
             @endphp
 
-            @forelse($nonTeknisGrouped as $index => $items)
+            @forelse($nonTeknisGrouped as $items)
 
                 @php
                     $rataIndikator = round($items->avg('nilai'), 2);
                 @endphp
 
                 <tr>
-                    <td class="center">{{ $index + 1 }}</td>
+                    <td class="center">{{ $loop->iteration }}</td>
                     <td>{{ $items->first()->indikator->nama_indikator }}</td>
                     <td class="center">{{ number_format($rataIndikator, 2) }}</td>
                     <td class="center">{{ konversiHuruf($rataIndikator) }}</td>
