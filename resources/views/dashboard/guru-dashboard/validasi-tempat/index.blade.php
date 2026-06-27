@@ -20,6 +20,7 @@
                 <tr>
                     <th class="px-4 py-3 text-left">Siswa</th>
                     <th class="px-4 py-3 text-left">Tempat</th>
+                    <th class="px-4 py-3 text-left">Pembimbing Lapangan</th>
                     <th class="px-4 py-3 text-center">Status Saat Ini</th>
                     <th class="px-4 py-3 text-center">Pengajuan</th>
                     <th class="px-4 py-3 text-center">Status Validasi</th>
@@ -48,8 +49,9 @@
 
                         $current  = $item->status_validasi ?? 'menunggu';
 
-                        // Disabled jika tidak ada pengajuan ATAU sudah diterima
-                        $disabled = empty($item->status_pengajuan) || $item->status_validasi === 'diterima';
+                        // Disabled jika tidak ada pengajuan atau validasi sudah selesai
+                        $disabled = empty($item->status_pengajuan)
+                            || in_array($item->status_validasi, ['diterima', 'ditolak']);
                     @endphp
 
                     <tr class="border-b hover:bg-gray-50 transition-colors">
@@ -60,6 +62,10 @@
 
                         <td class="px-4 py-3">
                             {{ $item->tempat->nama_perusahaan }}
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ $item->pembimbingLapangan->nama_lengkap ?? '-' }}
                         </td>
 
                         <td class="px-4 py-3 text-center">
@@ -104,11 +110,19 @@
                                             class="w-full bg-gray-300 text-gray-500 text-xs px-3 py-2 rounded cursor-not-allowed">
                                         Tidak Ada Pengajuan
                                     </button>
+
                                 @elseif ($item->status_validasi === 'diterima')
                                     <button type="button" disabled
                                             class="w-full bg-gray-400 text-white text-xs px-3 py-2 rounded cursor-not-allowed">
                                         Sudah Disetujui
                                     </button>
+
+                                @elseif ($item->status_validasi === 'ditolak')
+                                    <button type="button" disabled
+                                            class="w-full bg-red-400 text-white text-xs px-3 py-2 rounded cursor-not-allowed">
+                                        Sudah Ditolak
+                                    </button>
+
                                 @else
                                     <button type="submit"
                                             class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded">
@@ -122,7 +136,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center px-4 py-8 text-gray-500">
+                        <td colspan="7" class="text-center px-4 py-8 text-gray-500">
                             Tidak ada data
                         </td>
                     </tr>
@@ -152,7 +166,9 @@
                 };
 
                 $current  = $item->status_validasi ?? 'menunggu';
-                $disabled = empty($item->status_pengajuan) || $item->status_validasi === 'diterima';
+
+                $disabled = empty($item->status_pengajuan) 
+                    || in_array($item->status_validasi, ['diterima', 'ditolak']);
             @endphp
 
             <div class="bg-white rounded-2xl shadow-sm border p-4">
@@ -163,8 +179,14 @@
                         <h2 class="font-semibold text-gray-800">
                             {{ $item->siswa->nama_lengkap }}
                         </h2>
+
                         <p class="text-sm text-gray-500 mt-1">
                             {{ $item->tempat->nama_perusahaan }}
+                        </p>
+
+                        <p class="text-sm text-indigo-600 mt-1">
+                            <span class="font-medium">Pembimbing Lapangan:</span>
+                            {{ $item->pembimbingLapangan->nama_lengkap ?? '-' }}
                         </p>
                     </div>
 
@@ -215,11 +237,19 @@
                                 class="w-full bg-gray-300 text-gray-500 text-sm px-4 py-2.5 rounded-xl cursor-not-allowed">
                             Tidak Ada Pengajuan
                         </button>
+
                     @elseif ($item->status_validasi === 'diterima')
                         <button type="button" disabled
                                 class="w-full bg-gray-400 text-white text-sm px-4 py-2.5 rounded-xl cursor-not-allowed">
                             Sudah Disetujui
                         </button>
+
+                    @elseif ($item->status_validasi === 'ditolak')
+                        <button type="button" disabled
+                                class="w-full bg-red-400 text-white text-sm px-4 py-2.5 rounded-xl cursor-not-allowed">
+                            Sudah Ditolak
+                        </button>
+
                     @else
                         <button type="submit"
                                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2.5 rounded-xl">

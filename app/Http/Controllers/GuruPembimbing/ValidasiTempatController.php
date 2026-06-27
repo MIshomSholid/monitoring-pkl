@@ -44,8 +44,8 @@ class ValidasiTempatController extends Controller
             return back()->with('error', 'Tidak ada pengajuan yang perlu divalidasi.');
         }
 
-        if ($penempatan->status_validasi === 'diterima') {
-            return back()->with('error', 'Data sudah disetujui dan tidak dapat diubah.');
+        if (in_array($penempatan->status_validasi, ['diterima', 'ditolak'])) {
+            return back()->with('error', 'Validasi sudah diproses dan tidak dapat diubah.');
         }
 
         if ($request->status_validasi === 'diterima') {
