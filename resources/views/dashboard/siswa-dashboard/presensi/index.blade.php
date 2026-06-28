@@ -23,10 +23,22 @@
 
             {{-- ================= STATUS HARI INI ================= --}}
             @if ($presensiHariIni)
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-lg">
+
+                @php
+                    $warna = match ($presensiHariIni->jenis_presensi) {
+                        'hadir' => 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                        'izin' => 'bg-yellow-50 border-yellow-200 text-yellow-700',
+                        'libur' => 'bg-gray-50 border-gray-200 text-gray-700',
+                        'alpha' => 'bg-red-50 border-red-200 text-red-700',
+                        default => 'bg-blue-50 border-blue-200 text-blue-700',
+                    };
+                @endphp
+
+                <div class="border p-4 rounded-lg {{ $warna }}">
                     <p class="font-semibold">
                         Presensi hari ini telah tercatat.
                     </p>
+
                     <p class="text-sm mt-1">
                         Jenis presensi:
                         <strong>{{ strtoupper($presensiHariIni->jenis_presensi) }}</strong>
