@@ -296,7 +296,9 @@ class PresensiController extends Controller
                 'event' => 'presensi.created',
                 'data' => [
                     'id' => $presensi->id,
-                    'tanggal' => \Carbon\Carbon::parse($presensi->tanggal)->format('d M Y'),
+                    'tanggal' => \Carbon\Carbon::parse($presensi->tanggal)
+                ->locale('id')
+                ->translatedFormat('d M Y'),
                     'jenis_presensi' => $presensi->jenis_presensi,
                     'waktu_presensi' => $presensi->waktu_presensi,
                     'nama_siswa' => $penempatan->siswa->nama_lengkap,

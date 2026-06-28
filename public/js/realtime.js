@@ -35,10 +35,13 @@
     });
 
     function handlePresensiCreated(data) {
-        // Alpha tidak perlu tampil di halaman validasi
+        const cardContainer = document.querySelector("#presensi-container");
+
+        // Alpha dibuat otomatis dan tidak perlu tampil di halaman validasi.
+        // Namun Alpha tetap harus muncul pada halaman monitoring, rekap, dan riwayat.
         if (
-            data.jenis_presensi === "alpha" ||
-            data.status_validasi !== "menunggu"
+            cardContainer &&
+            (data.jenis_presensi === "alpha" || data.status_validasi !== "menunggu")
         ) {
             return;
         }
@@ -48,8 +51,6 @@
         /* =============================
            CARD PAGE (VALIDASI PEMBIMBING)
         ============================= */
-
-        const cardContainer = document.querySelector("#presensi-container");
 
         if (cardContainer) {
             if (document.getElementById("presensi-card-" + data.id)) return;
@@ -476,6 +477,9 @@
         if (!tanggal) return "-";
 
         const d = new Date(tanggal);
+        if (Number.isNaN(d.getTime())) {
+            return tanggal;
+        }
 
         return d.toLocaleDateString("id-ID", {
             day: "2-digit",
