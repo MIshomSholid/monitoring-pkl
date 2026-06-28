@@ -24,7 +24,12 @@ class GenerateAlphaPresensi extends Command
         $namaHari = strtolower($tanggal->translatedFormat('l'));
 
         $penempatanList = PenempatanPkl::withoutGlobalScopes()
-            ->with(['tempatPkl'])
+            ->with([
+                'tempatPkl',
+                'siswa',
+                'guruPembimbing',
+                'pembimbingLapangan',
+            ])
             ->where('status', 'aktif')
             ->whereDate('tanggal_mulai', '<=', $tanggal)
             ->whereDate('tanggal_selesai', '>=', $tanggal)
@@ -65,11 +70,11 @@ class GenerateAlphaPresensi extends Command
                 'event' => 'presensi.created',
                 'data' => [
                     'id' => $presensi->id,
-                    'nama_siswa' => $pkl->siswa->nama ?? 'Unknown',
+                    'nama_siswa' => $pkl->siswa->nama_lengkap ?? 'Unknown',
                     'tanggal' => $tanggal->format('Y-m-d'),
                     'jenis_presensi' => 'alpha',
                     'status_validasi' => 'diterima',
-                    'nama_perusahaan' => $pkl->tempatPkl->nama ?? '-',
+                    'nama_perusahaan' => $pkl->tempatPkl->nama_perusahaan ?? '-',
                     'siswa_user_id' => $pkl->siswa->user_id ?? null,
                     'guru_user_id' => $pkl->guruPembimbing->user_id ?? null,
                     'pembimbing_user_id' => $pkl->pembimbingLapangan->user_id ?? null,
