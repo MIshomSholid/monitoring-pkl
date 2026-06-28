@@ -10,10 +10,11 @@ use Carbon\Carbon;
 class PresensiSeeder extends Seeder
 {
     /**
-     * Lokasi default foto
+     * Default URL Cloudinary
      */
-    private string $fotoPresensi = 'storage/presensi/presensi.png';
-    private string $buktiIzin = 'storage/izin/izin.png';
+    private string $fotoPresensi = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1782668217/presensi/r2q6ptqvttfeeto4hkmr.jpg';
+
+    private string $buktiIzin = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1782668990/izin/q8j5zbuxqv2coyrnb2xr.jpg';
 
     /**
      * Jalankan Seeder
