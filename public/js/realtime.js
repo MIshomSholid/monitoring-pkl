@@ -35,6 +35,14 @@
     });
 
     function handlePresensiCreated(data) {
+        // Alpha tidak perlu tampil di halaman validasi
+        if (
+            data.jenis_presensi === "alpha" ||
+            data.status_validasi !== "menunggu"
+        ) {
+            return;
+        }
+
         console.log("[Realtime] Presensi:", data);
 
         /* =============================
@@ -63,11 +71,11 @@
                         </p>
 
                         <p><span class="font-medium">Tanggal:</span> 
-                            ${data.tanggal}
+                            ${formatTanggal(data.tanggal)}
                         </p>
 
                         <p><span class="font-medium">Waktu:</span> 
-                            ${data.waktu_presensi}
+                            ${data.waktu_presensi ?? "-"}
                         </p>
 
                         <p><span class="font-medium">Jarak:</span> 
@@ -203,7 +211,7 @@
         <tr id="presensi-row-${data.id}" class="border-b hover:bg-gray-50">
 
             <td class="px-4 py-3">
-                ${data.tanggal}
+                ${formatTanggal(data.tanggal)}
             </td>
 
             <td class="px-4 py-3">
@@ -279,7 +287,7 @@
 
             <!-- TANGGAL -->
             <td class="px-4 py-2">
-                ${data.tanggal}
+                ${formatTanggal(data.tanggal)}
             </td>
 
             <!-- NAMA -->
@@ -294,7 +302,7 @@
 
             <!-- WAKTU -->
             <td class="px-4 py-2">
-                ${data.waktu_presensi}
+                ${data.waktu_presensi ?? "-"}
             </td>
 
             <!-- JARAK -->
@@ -373,7 +381,7 @@
 
             <!-- TANGGAL -->
             <td class="px-4 py-3">
-                ${data.tanggal}
+                ${formatTanggal(data.tanggal)}
             </td>
 
             <!-- JENIS -->
@@ -462,6 +470,18 @@
     function capitalize(str) {
         if (!str) return "";
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function formatTanggal(tanggal) {
+        if (!tanggal) return "-";
+
+        const d = new Date(tanggal);
+
+        return d.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
     }
 
     function highlight(id) {

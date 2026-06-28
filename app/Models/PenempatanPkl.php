@@ -96,14 +96,14 @@ class PenempatanPkl extends Model
         return $this->status === 'aktif';
     }
 
-    // 🔥 HELPER PALING PENTING (UNTUK PRESENSI)
+    // HELPER PALING PENTING (UNTUK PRESENSI)
     public function isAktifHariIni(): bool
     {
         $today = Carbon::today();
 
         return $this->isAktif()
             && $today->gte($this->tanggal_mulai)
-            && $today->lt($this->tanggal_selesai);
+            && $today->lte($this->tanggal_selesai);
     }
 
     // ================= LAPORAN & KPI =================
