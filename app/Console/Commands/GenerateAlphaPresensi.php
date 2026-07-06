@@ -19,7 +19,7 @@ class GenerateAlphaPresensi extends Command
         \Log::info('GENERATE ALPHA JALAN: ' . now());
         Carbon::setLocale('id');
 
-        $tanggal = Carbon::today();
+        $tanggal = Carbon::yesterday();
         //today
         $namaHari = strtolower($tanggal->translatedFormat('l'));
 
