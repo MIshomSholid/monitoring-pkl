@@ -15,7 +15,7 @@ class RegeneratePresensiTanggalSeeder extends Seeder
 
     public function run(): void
     {
-        $tanggal = Carbon::create(2026, 7, 7);
+        $tanggal = Carbon::create(2026, 7, 8);
 
         // Hapus presensi tanggal tersebut
         Presensi::whereDate('tanggal', $tanggal)->delete();
@@ -103,7 +103,7 @@ class RegeneratePresensiTanggalSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('Presensi tanggal 7 Juli 2026 berhasil digenerate ulang.');
+        $this->command->info('Presensi tanggal 8 Juli 2026 berhasil digenerate ulang.');
     }
 
     private function generateStatus(): string
