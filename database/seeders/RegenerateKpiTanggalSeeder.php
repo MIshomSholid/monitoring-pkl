@@ -15,7 +15,7 @@ class RegenerateKpiTanggalSeeder extends Seeder
      * GANTI TANGGAL DISINI
      * ======================================
      */
-    private string $tanggal = '2026-07-08';
+    private string $tanggal = '2026-07-06';
 
     /**
      * ======================================
