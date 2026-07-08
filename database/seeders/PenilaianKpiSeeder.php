@@ -27,9 +27,11 @@ class PenilaianKpiSeeder extends Seeder
             ->get();
 
         if ($indikatorTeknis->isEmpty() || $indikatorNonTeknis->isEmpty()) {
+
             $this->command->error('Indikator KPI belum tersedia.');
 
             return;
+
         }
 
         /*
@@ -51,8 +53,6 @@ class PenilaianKpiSeeder extends Seeder
             |--------------------------------------------------------------------------
             | Timeline Seeder
             |--------------------------------------------------------------------------
-            | Mulai 1 Juni 2026
-            | Sampai 3 Juli 2026
             */
 
             $tanggal = Carbon::parse($item->tanggal_mulai);
@@ -65,7 +65,7 @@ class PenilaianKpiSeeder extends Seeder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Skip jika bukan hari wajib perusahaan
+                | Skip jika bukan hari wajib
                 |--------------------------------------------------------------------------
                 */
 
@@ -74,6 +74,7 @@ class PenilaianKpiSeeder extends Seeder
                     $tanggal->addDay();
 
                     continue;
+
                 }
 
                 /*
@@ -90,16 +91,19 @@ class PenilaianKpiSeeder extends Seeder
                     $tanggal->addDay();
 
                     continue;
+
                 }
 
                 /*
                 |--------------------------------------------------------------------------
                 | ASPEK TEKNIS
                 |--------------------------------------------------------------------------
-                | Semua indikator teknis diisi
+                | Hanya 1 indikator teknis setiap hari
                 */
 
-                foreach ($indikatorTeknis as $kpi) {
+                if ($indikatorTeknis->isNotEmpty()) {
+
+                    $kpi = $indikatorTeknis->random();
 
                     PenilaianKpi::updateOrCreate(
 
@@ -110,7 +114,7 @@ class PenilaianKpiSeeder extends Seeder
                         ],
 
                         [
-                            'nilai' => rand(75, 95),
+                            'nilai' => $this->generateNilai(),
                             'catatan' => $this->catatan(),
                             'status_validasi' => 'diterima',
                             'input_by' => optional($item->pembimbingLapangan)->user_id,
@@ -139,7 +143,7 @@ class PenilaianKpiSeeder extends Seeder
                         ],
 
                         [
-                            'nilai' => rand(75, 95),
+                            'nilai' => $this->generateNilai(),
                             'catatan' => $this->catatan(),
                             'status_validasi' => 'diterima',
                             'input_by' => optional($item->pembimbingLapangan)->user_id,
@@ -173,6 +177,31 @@ class PenilaianKpiSeeder extends Seeder
         $hariWajib = $penempatan->tempatPkl->hari_wajib ?? [];
 
         return in_array($hari, $hariWajib);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helper Nilai
+    |--------------------------------------------------------------------------
+    */
+
+    private function generateNilai(): int
+    {
+        $angka = rand(1, 100);
+
+        if ($angka <= 5) {
+            return rand(80, 85);
+        }
+
+        if ($angka <= 25) {
+            return rand(86, 90);
+        }
+
+        if ($angka <= 75) {
+            return rand(91, 96);
+        }
+
+        return rand(97, 100);
     }
 
     /*
