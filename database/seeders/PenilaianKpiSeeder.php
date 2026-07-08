@@ -14,7 +14,15 @@ class PenilaianKpiSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
-        | Ambil seluruh indikator
+        | Hapus seluruh data KPI lama
+        |--------------------------------------------------------------------------
+        */
+
+        PenilaianKpi::truncate();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil indikator
         |--------------------------------------------------------------------------
         */
 
@@ -31,29 +39,22 @@ class PenilaianKpiSeeder extends Seeder
             $this->command->error('Indikator KPI belum tersedia.');
 
             return;
-
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Ambil seluruh penempatan PKL aktif
+        | Penempatan PKL
         |--------------------------------------------------------------------------
         */
 
         $penempatan = PenempatanPkl::with([
             'tempatPkl',
-            'pembimbingLapangan'
+            'pembimbingLapangan',
         ])
             ->where('status', 'aktif')
             ->get();
 
         foreach ($penempatan as $item) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Timeline Seeder
-            |--------------------------------------------------------------------------
-            */
 
             $tanggal = Carbon::parse($item->tanggal_mulai);
 
@@ -65,7 +66,7 @@ class PenilaianKpiSeeder extends Seeder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Skip jika bukan hari wajib
+                | Hari wajib
                 |--------------------------------------------------------------------------
                 */
 
@@ -74,12 +75,11 @@ class PenilaianKpiSeeder extends Seeder
                     $tanggal->addDay();
 
                     continue;
-
                 }
 
                 /*
                 |--------------------------------------------------------------------------
-                | Penilaian hanya Senin & Kamis
+                | Senin & Kamis
                 |--------------------------------------------------------------------------
                 */
 
@@ -91,74 +91,75 @@ class PenilaianKpiSeeder extends Seeder
                     $tanggal->addDay();
 
                     continue;
-
                 }
 
                 /*
                 |--------------------------------------------------------------------------
-                | ASPEK TEKNIS
+                | 1 Indikator Teknis
                 |--------------------------------------------------------------------------
-                | Hanya 1 indikator teknis setiap hari
                 */
 
                 if ($indikatorTeknis->isNotEmpty()) {
 
-                    $kpi = $indikatorTeknis->random();
+                    $kpiTeknis = $indikatorTeknis->random();
 
-                    PenilaianKpi::updateOrCreate(
+                    PenilaianKpi::create([
 
-                        [
-                            'penempatan_pkl_id' => $item->id,
-                            'kpi_indikator_id' => $kpi->id,
-                            'periode_penilaian' => $tanggal->toDateString(),
-                        ],
+                        'penempatan_pkl_id' => $item->id,
 
-                        [
-                            'nilai' => $this->generateNilai(),
-                            'catatan' => $this->catatan(),
-                            'status_validasi' => 'diterima',
-                            'input_by' => optional($item->pembimbingLapangan)->user_id,
-                            'validated_by' => 1,
-                            'validated_at' => now(),
-                        ]
+                        'kpi_indikator_id' => $kpiTeknis->id,
 
-                    );
+                        'nilai' => $this->generateNilai(),
 
+                        'periode_penilaian' => $tanggal->toDateString(),
+
+                        'catatan' => $this->catatan(),
+
+                        'status_validasi' => 'diterima',
+
+                        'input_by' => optional($item->pembimbingLapangan)->user_id,
+
+                        'validated_by' => 1,
+
+                        'validated_at' => now(),
+
+                    ]);
                 }
 
                 /*
                 |--------------------------------------------------------------------------
-                | ASPEK NON TEKNIS
+                | Semua Indikator Non Teknis
                 |--------------------------------------------------------------------------
                 */
 
                 foreach ($indikatorNonTeknis as $kpi) {
 
-                    PenilaianKpi::updateOrCreate(
+                    PenilaianKpi::create([
 
-                        [
-                            'penempatan_pkl_id' => $item->id,
-                            'kpi_indikator_id' => $kpi->id,
-                            'periode_penilaian' => $tanggal->toDateString(),
-                        ],
+                        'penempatan_pkl_id' => $item->id,
 
-                        [
-                            'nilai' => $this->generateNilai(),
-                            'catatan' => $this->catatan(),
-                            'status_validasi' => 'diterima',
-                            'input_by' => optional($item->pembimbingLapangan)->user_id,
-                            'validated_by' => 1,
-                            'validated_at' => now(),
-                        ]
+                        'kpi_indikator_id' => $kpi->id,
 
-                    );
+                        'nilai' => $this->generateNilai(),
+
+                        'periode_penilaian' => $tanggal->toDateString(),
+
+                        'catatan' => $this->catatan(),
+
+                        'status_validasi' => 'diterima',
+
+                        'input_by' => optional($item->pembimbingLapangan)->user_id,
+
+                        'validated_by' => 1,
+
+                        'validated_at' => now(),
+
+                    ]);
 
                 }
 
                 $tanggal->addDay();
-
             }
-
         }
 
         $this->command->info('Penilaian KPI Seeder berhasil dijalankan.');
@@ -166,7 +167,7 @@ class PenilaianKpiSeeder extends Seeder
 
     /*
     |--------------------------------------------------------------------------
-    | Helper Hari Wajib
+    | Hari Wajib
     |--------------------------------------------------------------------------
     */
 
@@ -181,7 +182,7 @@ class PenilaianKpiSeeder extends Seeder
 
     /*
     |--------------------------------------------------------------------------
-    | Helper Nilai
+    | Nilai
     |--------------------------------------------------------------------------
     */
 
@@ -206,7 +207,7 @@ class PenilaianKpiSeeder extends Seeder
 
     /*
     |--------------------------------------------------------------------------
-    | Helper Catatan
+    | Catatan
     |--------------------------------------------------------------------------
     */
 
