@@ -46,6 +46,8 @@ class ValidasiLaporanController extends Controller
             ->orderBy('tanggal', 'desc')
             ->get();
 
+        $laporan = $query->paginate(10)->withQueryString();
+
         /* ================= DROPDOWN SISWA ================= */
         $daftarSiswa = Siswa::whereHas('penempatanPkl', function ($q) use ($guru) {
                 $q->where('guru_pembimbing_id', $guru->id)

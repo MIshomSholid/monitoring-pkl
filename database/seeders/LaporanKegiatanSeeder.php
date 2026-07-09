@@ -48,9 +48,9 @@ class LaporanKegiatanSeeder extends Seeder
 
             ->whereBetween('tanggal', [
 
-                Carbon::create(2026, 6, 1)->toDateString(),
-
                 Carbon::create(2026, 7, 3)->toDateString(),
+
+                Carbon::create(2026, 7, 10)->toDateString(),
 
             ])
 
