@@ -59,7 +59,7 @@ class PenilaianKpiSeeder extends Seeder
             $tanggal = Carbon::parse($item->tanggal_mulai);
 
             $selesai = Carbon::parse(
-                min($item->tanggal_selesai, '2026-07-03')
+                min($item->tanggal_selesai, '2026-07-10')
             );
 
             while ($tanggal->lte($selesai)) {
@@ -113,8 +113,6 @@ class PenilaianKpiSeeder extends Seeder
 
                         'periode_penilaian' => $tanggal->toDateString(),
 
-                        'catatan' => $this->catatan(),
-
                         'status_validasi' => 'diterima',
 
                         'input_by' => optional($item->pembimbingLapangan)->user_id,
@@ -143,8 +141,6 @@ class PenilaianKpiSeeder extends Seeder
                         'nilai' => $this->generateNilai(),
 
                         'periode_penilaian' => $tanggal->toDateString(),
-
-                        'catatan' => $this->catatan(),
 
                         'status_validasi' => 'diterima',
 
@@ -205,29 +201,4 @@ class PenilaianKpiSeeder extends Seeder
         return rand(97, 100);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Catatan
-    |--------------------------------------------------------------------------
-    */
-
-    private function catatan(): string
-    {
-        $catatan = [
-
-            'Sangat baik.',
-            'Disiplin dan bertanggung jawab.',
-            'Aktif selama kegiatan PKL.',
-            'Komunikasi sangat baik.',
-            'Cepat memahami pekerjaan.',
-            'Mampu bekerja sama dalam tim.',
-            'Memiliki inisiatif yang baik.',
-            'Perlu meningkatkan ketelitian.',
-            'Performa kerja konsisten.',
-            'Hasil pekerjaan memuaskan.',
-
-        ];
-
-        return $catatan[array_rand($catatan)];
-    }
 }

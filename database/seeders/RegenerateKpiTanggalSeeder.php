@@ -15,7 +15,7 @@ class RegenerateKpiTanggalSeeder extends Seeder
      * GANTI TANGGAL DISINI
      * ======================================
      */
-    private string $tanggal = '2026-07-09';
+    private string $tanggal = '2026-07-10';
 
     /**
      * ======================================
@@ -115,8 +115,6 @@ class RegenerateKpiTanggalSeeder extends Seeder
 
                     'periode_penilaian' => $tanggal->toDateString(),
 
-                    'catatan' => null,
-
                     'status_validasi' => 'diterima',
 
                     'input_by' => $penempatan
@@ -150,8 +148,6 @@ class RegenerateKpiTanggalSeeder extends Seeder
                     'nilai' => $this->generateNilai(),
 
                     'periode_penilaian' => $tanggal->toDateString(),
-
-                    'catatan' => null,
 
                     'status_validasi' => 'diterima',
 
