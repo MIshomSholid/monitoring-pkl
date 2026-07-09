@@ -15,7 +15,6 @@ class PenilaianKpi extends Model
         'kpi_indikator_id',
         'nilai',
         'periode_penilaian',
-        'catatan',
         'status_validasi',
         'input_by',
         'validated_by',

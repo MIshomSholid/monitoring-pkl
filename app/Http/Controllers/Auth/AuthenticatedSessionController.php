@@ -24,6 +24,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        //ends_with:smkn7.sch.id'
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
