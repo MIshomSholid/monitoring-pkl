@@ -10,7 +10,7 @@ use Carbon\Carbon;
 class LaporanKegiatanSeeder extends Seeder
 {
     /**
-     * File bukti default
+     * File bukti default (Cloudinary)
      */
     private string $fileBukti = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1783628259/laporan-kegiatan/bnnhhmsxsd77qugh8cgl.jpg';
 
@@ -21,12 +21,23 @@ class LaporanKegiatanSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
+        | Hapus laporan lama pada rentang tanggal
+        |--------------------------------------------------------------------------
+        */
+
+        LaporanKegiatan::whereBetween('tanggal', [
+            Carbon::create(2026, 6, 1)->toDateString(),
+            Carbon::create(2026, 7, 10)->toDateString(),
+        ])->delete();
+
+        /*
+        |--------------------------------------------------------------------------
         | Ambil seluruh presensi HADIR
         |--------------------------------------------------------------------------
         */
 
         $presensiList = Presensi::with([
-            'penempatanPkl.guruPembimbing'
+            'penempatanPkl.guruPembimbing',
         ])
             ->where('jenis_presensi', 'hadir')
             ->whereBetween('tanggal', [
@@ -39,7 +50,7 @@ class LaporanKegiatanSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | Setiap presensi hadir = 1 laporan kegiatan
+        | Setiap presensi HADIR = 1 laporan kegiatan
         |--------------------------------------------------------------------------
         */
 
@@ -49,23 +60,24 @@ class LaporanKegiatanSeeder extends Seeder
                 $presensi->penempatanPkl->guruPembimbing
             )->user_id;
 
-            LaporanKegiatan::updateOrCreate(
+            LaporanKegiatan::create([
 
-                [
-                    'penempatan_pkl_id' => $presensi->penempatan_pkl_id,
-                    'tanggal'           => $presensi->tanggal,
-                ],
+                'penempatan_pkl_id' => $presensi->penempatan_pkl_id,
+                'tanggal'           => $presensi->tanggal,
 
-                [
-                    'deskripsi_kegiatan' => $this->generateDeskripsi(),
-                    'file_bukti'         => $this->fileBukti,
-                    'status_validasi'    => 'diterima',
-                    'catatan_validasi'   => 'Laporan sesuai kegiatan PKL.',
-                    'validated_by'       => $guruUserId,
-                    'validated_at'       => now(),
-                ]
+                'deskripsi_kegiatan' => $this->generateDeskripsi(),
 
-            );
+                'file_bukti' => $this->fileBukti,
+
+                'status_validasi' => 'diterima',
+
+                'catatan_validasi' => 'Laporan sesuai kegiatan PKL.',
+
+                'validated_by' => $guruUserId,
+
+                'validated_at' => now(),
+
+            ]);
         }
 
         $this->command->info('Laporan Kegiatan Seeder berhasil dijalankan.');
