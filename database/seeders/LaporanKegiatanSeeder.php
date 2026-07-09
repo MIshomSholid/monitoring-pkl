@@ -12,7 +12,7 @@ class LaporanKegiatanSeeder extends Seeder
     /**
      * File bukti default
      */
-    private string $fileBukti = 'storage/laporan/laporan.png';
+    private string $fileBukti = 'https://res.cloudinary.com/dl7px9jnw/image/upload/v1783628259/laporan-kegiatan/bnnhhmsxsd77qugh8cgl.jpg';
 
     /**
      * Jalankan Seeder
@@ -25,7 +25,10 @@ class LaporanKegiatanSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $presensiList = Presensi::where('jenis_presensi', 'hadir')
+        $presensiList = Presensi::with([
+            'penempatanPkl.guruPembimbing'
+        ])
+            ->where('jenis_presensi', 'hadir')
             ->whereBetween('tanggal', [
                 Carbon::create(2026, 6, 1)->toDateString(),
                 Carbon::create(2026, 7, 10)->toDateString(),
@@ -42,24 +45,27 @@ class LaporanKegiatanSeeder extends Seeder
 
         foreach ($presensiList as $presensi) {
 
+            $guruUserId = optional(
+                $presensi->penempatanPkl->guruPembimbing
+            )->user_id;
+
             LaporanKegiatan::updateOrCreate(
 
                 [
                     'penempatan_pkl_id' => $presensi->penempatan_pkl_id,
-                    'tanggal' => $presensi->tanggal,
+                    'tanggal'           => $presensi->tanggal,
                 ],
 
                 [
                     'deskripsi_kegiatan' => $this->generateDeskripsi(),
-                    'file_bukti' => $this->fileBukti,
-                    'status_validasi' => 'diterima',
-                    'catatan_validasi' => 'Laporan sesuai kegiatan PKL.',
-                    'validated_by' => 1,
-                    'validated_at' => now(),
+                    'file_bukti'         => $this->fileBukti,
+                    'status_validasi'    => 'diterima',
+                    'catatan_validasi'   => 'Laporan sesuai kegiatan PKL.',
+                    'validated_by'       => $guruUserId,
+                    'validated_at'       => now(),
                 ]
 
             );
-
         }
 
         $this->command->info('Laporan Kegiatan Seeder berhasil dijalankan.');
