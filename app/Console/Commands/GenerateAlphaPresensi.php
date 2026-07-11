@@ -7,6 +7,7 @@ use App\Models\PenempatanPkl;
 use App\Models\Presensi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use DB;
 
 class GenerateAlphaPresensi extends Command
@@ -16,7 +17,7 @@ class GenerateAlphaPresensi extends Command
 
     public function handle()
     {
-        \Log::info('GENERATE ALPHA JALAN: ' . now());
+        Log::info('GENERATE ALPHA JALAN: ' . now());
         Carbon::setLocale('id');
 
         $tanggal = Carbon::yesterday();

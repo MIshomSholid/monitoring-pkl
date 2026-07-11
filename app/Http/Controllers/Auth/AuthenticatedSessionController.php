@@ -80,6 +80,15 @@ class AuthenticatedSessionController extends Controller
             }
         }
 
+        // GURU PEMBIMBING
+        if ($user->role === 'guru_pembimbing') {
+
+            if (!$user->guruPembimbing) {
+                abort(403, 'Data guru pembimbing tidak ditemukan.');
+            }
+
+        }
+
         // PEMBIMBING LAPANGAN
         if ($user->role === 'pembimbing_lapangan') {
 
@@ -92,6 +101,7 @@ class AuthenticatedSessionController extends Controller
             $pembimbingId = $pembimbing->id;
 
             $hasActiveSiswa = PenempatanPkl::where('pembimbing_lapangan_id', $pembimbingId)
+                ->where('status', 'aktif')
                 ->exists();
 
             if (!$hasActiveSiswa) {

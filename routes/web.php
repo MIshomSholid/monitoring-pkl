@@ -97,7 +97,7 @@ Route::get('/dashboard', function () {
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'check.active'])
+Route::middleware(['auth', 'check.active', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
