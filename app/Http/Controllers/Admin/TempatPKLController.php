@@ -98,7 +98,7 @@ class TempatPKLController extends Controller
             'radius_meter' => $request->radius_meter,
             'kuota_siswa' => $request->kuota_siswa,
 
-            // ✅ UPDATE SETTING PRESENSI
+            // UPDATE SETTING PRESENSI
             'jam_masuk' => $request->jam_masuk,
             'toleransi_keterlambatan' => $request->toleransi_keterlambatan,
             'hari_wajib' => $request->hari_wajib,

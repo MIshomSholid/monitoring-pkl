@@ -199,26 +199,6 @@ class MonitoringKPIController extends Controller
 
     /*
     =====================================================
-    KPI TERBARU
-    =====================================================
-    */
-
-    private function getKpiTerbaru($penempatanId)
-    {
-        $tanggal = PenilaianKpi::where('penempatan_pkl_id', $penempatanId)
-            ->where('status_validasi', 'diterima')
-            ->max('periode_penilaian');
-
-        return PenilaianKpi::with('indikator.kategori')
-            ->where('penempatan_pkl_id', $penempatanId)
-            ->whereHas('siswa.user', fn($q) => $q->where('is_active', 1))
-            ->whereDate('periode_penilaian', $tanggal)
-            ->where('status_validasi', 'diterima')
-            ->get();
-    }
-
-    /*
-    =====================================================
     HITUNG TEKNIS
     =====================================================
     */

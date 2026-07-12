@@ -24,7 +24,7 @@ class ProfilController extends Controller
 
     $penempatan = $siswa->penempatanAktif;
 
-    // 🔽 TAMBAHAN: Informasi & Jadwal PKL dari Admin
+    // Informasi & Jadwal PKL dari Admin
     $informasiPkl = InformasiPkl::where('is_published', true)
         ->whereDate('tanggal_publish', '<=', now())
         ->orderBy('tanggal_publish', 'desc')

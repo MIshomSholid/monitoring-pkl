@@ -78,7 +78,7 @@ class LaporanAkhirController extends Controller
         ])->findOrFail($request->penempatan_id);
 
         /**
-         * 🔒 PROTEKSI:
+         * PROTEKSI:
          * Hanya boleh cetak jika sudah disetujui Guru Pembimbing
          */
         if (

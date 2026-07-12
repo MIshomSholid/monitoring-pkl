@@ -15,7 +15,7 @@ class ValidasiLaporanController extends Controller
     {
         $guru = GuruPembimbing::where('user_id', auth()->id())->firstOrFail();
 
-        // 🔹 Query utama laporan (SEMUA DATA DULU)
+        // Query utama laporan (SEMUA DATA DULU)
         $query = LaporanKegiatan::with([
             'penempatanPkl.siswa'
         ])

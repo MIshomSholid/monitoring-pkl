@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class RiwayatPresensiController extends Controller
 {
+    // Menampilkan riwayat presensi siswa yang sedang PKL
     public function index()
     {
         $siswa = Auth::user()->siswa;
@@ -25,7 +26,7 @@ class RiwayatPresensiController extends Controller
             ]);
         }
 
-        // WAJIB PAKAI MODEL + with()
+        // Mengambil data riwayat presensi beserta informasi tempat PKL
         $presensi = Presensi::with('penempatanPkl.tempatPkl')
             ->where('penempatan_pkl_id', $penempatan->id)
             ->orderBy('tanggal', 'desc')

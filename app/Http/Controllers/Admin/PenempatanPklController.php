@@ -32,9 +32,31 @@ class PenempatanPklController extends Controller
                 'pembimbingLapangan'
             ]);
 
-        if ($request->filled('periode_id')) {
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER PERIODE
+        |--------------------------------------------------------------------------
+        */
+
+        // FILTER PERIODE
+
+        if (!$request->has('periode_id')) {
+
+            // Halaman pertama dibuka
+            $periodeAktif = PeriodePkl::where('is_active', true)->first();
+
+            if ($periodeAktif) {
+                $query->where('periode_pkl_id', $periodeAktif->id);
+            }
+
+        } elseif ($request->periode_id != 'all') {
+
+            // Admin memilih periode tertentu
             $query->where('periode_pkl_id', $request->periode_id);
+
         }
+
+        // Jika periode_id = all maka tampil semua data
 
         if ($request->filled('search')) {
             $search = $request->search;

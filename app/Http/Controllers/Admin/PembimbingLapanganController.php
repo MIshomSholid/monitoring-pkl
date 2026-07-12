@@ -10,6 +10,7 @@ use Cloudinary\Cloudinary;
 
 class PembimbingLapanganController extends Controller
 {
+    // Menampilkan daftar pembimbing lapangan beserta fitur pencarian
     public function index(Request $request)
     {
         $query = PembimbingLapangan::with('user');
@@ -35,6 +36,7 @@ class PembimbingLapanganController extends Controller
         return view('dashboard.admin.pembimbing-data.index', compact('pembimbing'));
     }
 
+    // Menampilkan form tambah pembimbing lapangan
     public function create()
     {
         $users = User::where('role', 'pembimbing_lapangan')
@@ -44,6 +46,7 @@ class PembimbingLapanganController extends Controller
         return view('dashboard.admin.pembimbing-data.create', compact('users'));
     }
 
+    // Menyimpan data pembimbing lapangan baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -84,11 +87,13 @@ class PembimbingLapanganController extends Controller
             ->with('success', 'Data pembimbing lapangan berhasil disimpan');
     }
 
+    // Menampilkan form edit data pembimbing lapangan
     public function edit(PembimbingLapangan $pembimbing)
     {
         return view('dashboard.admin.pembimbing-data.edit', compact('pembimbing'));
     }
 
+    // Memperbarui data pembimbing lapangan
     public function update(Request $request, PembimbingLapangan $pembimbing)
     {
         $validated = $request->validate([
@@ -125,6 +130,7 @@ class PembimbingLapanganController extends Controller
             ->with('success', 'Data pembimbing lapangan berhasil diperbarui');
     }
 
+    // Menghapus data pembimbing lapangan
     public function destroy(PembimbingLapangan $pembimbing)
     {
         $pembimbing->delete();

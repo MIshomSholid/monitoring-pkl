@@ -22,7 +22,7 @@ class LaporanKegiatanController extends Controller
 
         $today = now()->toDateString();
 
-        // 🔒 CEK PRESENSI
+        // CEK PRESENSI
         $presensiHariIni = Presensi::where('penempatan_pkl_id', $penempatan->id)
             ->where('tanggal', $today)
             ->first();
@@ -63,7 +63,7 @@ class LaporanKegiatanController extends Controller
 
         $today = now()->toDateString();
 
-        // 🔒 VALIDASI PRESENSI
+        // VALIDASI PRESENSI
         $presensiHariIni = Presensi::where('penempatan_pkl_id', $penempatan->id)
             ->where('tanggal', $today)
             ->first();
@@ -72,7 +72,7 @@ class LaporanKegiatanController extends Controller
             abort(403, 'Anda tidak diizinkan mengisi laporan hari ini.');
         }
 
-        // 🔒 VALIDASI 1 HARI 1 LAPORAN
+        // VALIDASI 1 HARI 1 LAPORAN
         $exists = LaporanKegiatan::where('penempatan_pkl_id', $penempatan->id)
             ->where('tanggal', $today)
             ->exists();
