@@ -12,11 +12,12 @@ use Cloudinary\Cloudinary;
 
 class SiswaController extends Controller
 {
+    // Menampilkan daftar data siswa
     public function index(Request $request)
     {
         $query = Siswa::with('user');
 
-        // SEARCH
+        // Memfilter data berdasarkan NIS atau nama lengkap siswa
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('nis', 'like', '%' . $request->search . '%')
@@ -29,6 +30,7 @@ class SiswaController extends Controller
         return view('dashboard.admin.siswa-data.index', compact('siswas'));
     }
 
+    // Menampilkan form tambah data siswa
     public function create()
     {
         $users = User::where('role', 'siswa')
@@ -38,6 +40,7 @@ class SiswaController extends Controller
         return view('dashboard.admin.siswa-data.create', compact('users'));
     }
 
+    // Menyimpan data siswa baru
     public function store(Request $request)
     {
         $request->validate([
@@ -70,6 +73,7 @@ class SiswaController extends Controller
                     ]
                 );
 
+                // Menyimpan URL foto profil
                 $pathFoto = $upload['secure_url'];
             }
 
@@ -90,7 +94,7 @@ class SiswaController extends Controller
             ->with('success', 'Data siswa berhasil ditambahkan');
     }
 
-    // ================= DETAIL =================
+    // Menampilkan detail data siswa
     public function show(Siswa $siswa)
     {
         $siswa->load('user');
@@ -98,13 +102,13 @@ class SiswaController extends Controller
         return view('dashboard.admin.siswa-data.show', compact('siswa'));
     }
 
-    // ================= FORM EDIT =================
+    // Menampilkan form ubah data siswa
     public function edit(Siswa $siswa)
     {
         return view('dashboard.admin.siswa-data.edit', compact('siswa'));
     }
 
-    // ================= UPDATE =================
+    // Memperbarui data siswa
     public function update(Request $request, Siswa $siswa)
     {
         $request->validate([
@@ -128,6 +132,7 @@ class SiswaController extends Controller
                 'alamat'
             ]);
 
+            // Memeriksa apakah terdapat foto profil baru
             if ($request->hasFile('foto_profil')) {
 
                 $cloudinary = new Cloudinary([
@@ -156,7 +161,7 @@ class SiswaController extends Controller
             ->with('success', 'Data siswa berhasil diperbarui');
     }
 
-    // ================= DELETE =================
+    // Menghapus data siswa
     public function destroy(Siswa $siswa)
     {
         $siswa->delete();

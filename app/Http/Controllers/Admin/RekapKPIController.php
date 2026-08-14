@@ -218,11 +218,7 @@ class RekapKPIController extends Controller
             : 0;
     }
 
-    /*
-    ======================================================
-    HITUNG LAPORAN
-    ======================================================
-    */
+    // HITUNG LAPORAN
     private function hitungLaporan($penempatan)
     {
         $total = LaporanKegiatan::where('penempatan_pkl_id', $penempatan->id)

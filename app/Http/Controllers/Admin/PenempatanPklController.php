@@ -18,9 +18,7 @@ use App\Models\{
 
 class PenempatanPklController extends Controller
 {
-    /**
-     * LIST PENEMPATAN PKL
-     */
+    // LIST PENEMPATAN PKL
     public function index(Request $request)
     {
         $query = PenempatanPkl::withoutGlobalScope('aktif')
@@ -31,12 +29,6 @@ class PenempatanPklController extends Controller
                 'guru',
                 'pembimbingLapangan'
             ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER PERIODE
-        |--------------------------------------------------------------------------
-        */
 
         // FILTER PERIODE
 
@@ -86,9 +78,7 @@ class PenempatanPklController extends Controller
         return view('dashboard.admin.penempatan.index', compact('penempatan', 'periode'));
     }
 
-    /**
-     * FORM TAMBAH
-     */
+    // FORM TAMBAH
     public function create()
     {
         $siswaTerpakai = PenempatanPkl::withoutGlobalScope('aktif')
@@ -113,9 +103,7 @@ class PenempatanPklController extends Controller
         ]);
     }
 
-    /**
-     * SIMPAN
-     */
+    // SIMPAN
     public function store(Request $request)
     {
         $request->validate([
@@ -188,9 +176,7 @@ class PenempatanPklController extends Controller
             ->with('success', 'Penempatan PKL berhasil ditambahkan');
     }
 
-    /**
-     * FORM EDIT (LOGIKA AMAN)
-     */
+    // FORM EDIT (LOGIKA AMAN)
     public function edit($id)
     {
         $penempatan = PenempatanPkl::withoutGlobalScope('aktif')->findOrFail($id);
@@ -225,9 +211,7 @@ class PenempatanPklController extends Controller
         ]);
     }
 
-    /**
-     * UPDATE
-     */
+    // UPDATE
     public function update(Request $request, $id)
     {
         $penempatan = PenempatanPkl::withoutGlobalScope('aktif')->findOrFail($id);
@@ -293,9 +277,7 @@ class PenempatanPklController extends Controller
             ->with('success', 'Perubahan dikirim, menunggu validasi guru.');
     }
 
-    /**
-     * BULK UPDATE STATUS PER PERIODE
-     */
+    // BULK UPDATE STATUS PER PERIODE
     public function bulkUpdateStatus(Request $request)
     {
         $request->validate([
@@ -320,9 +302,7 @@ class PenempatanPklController extends Controller
             ->with('success', "Berhasil mengajukan perubahan {$updated} data, menunggu validasi guru.");
     }
 
-    /**
-     * HAPUS
-     */
+    // HAPUS
     public function destroy(PenempatanPkl $penempatan)
     {
         $penempatan->delete();

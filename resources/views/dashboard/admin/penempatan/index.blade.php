@@ -40,7 +40,7 @@
                             request()->has('periode_id')
                             ? (request('periode_id') == $p->id ? 'selected' : '')
                             : ($periodeAktif && $periodeAktif->id == $p->id ? 'selected' : '')
-                                }}>
+                                                    }}>
                                             {{ $p->nama_periode }}
                                         </option>
 
@@ -183,6 +183,139 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- ================= MOBILE CARD ================= --}}
+            <div class="md:hidden space-y-4">
+                @forelse($penempatan as $item)
+
+                    @php
+                        $statusClass = $item->status == 'aktif'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700';
+
+                        $pengajuanClass = $item->status_pengajuan == 'aktif'
+                            ? 'bg-green-100 text-green-700'
+                            : ($item->status_pengajuan == 'nonaktif'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-gray-100 text-gray-500');
+
+                        $validasiClass = match ($item->status_validasi) {
+                            'diterima' => 'bg-green-100 text-green-700',
+                            'ditolak' => 'bg-red-100 text-red-700',
+                            default => 'bg-yellow-100 text-yellow-700'
+                        };
+                    @endphp
+
+                    <div class="bg-white rounded-lg border shadow-sm p-4">
+
+                        <div class="flex justify-between items-start gap-3">
+                            <div>
+                                <h3 class="font-semibold text-gray-900">
+                                    {{ $item->siswa->nama_lengkap }}
+                                </h3>
+
+                                <p class="text-sm text-gray-500">
+                                    {{ $item->periode->nama_periode }}
+                                </p>
+                            </div>
+
+                            <span class="px-2 py-1 rounded text-xs {{ $statusClass }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </div>
+
+                        <div class="mt-4 space-y-2 text-sm">
+
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Tempat PKL</span>
+                                <span class="font-medium text-right">
+                                    {{ $item->tempat->nama_perusahaan }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Guru</span>
+                                <span class="text-right">
+                                    {{ $item->guru->nama_lengkap }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Pembimbing</span>
+                                <span class="text-right">
+                                    {{ $item->pembimbingLapangan->nama_lengkap }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Masa PKL</span>
+
+                                <span class="text-right">
+                                    {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}
+                                    <br>
+                                    s/d
+                                    <br>
+                                    {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">
+                                    Pengajuan
+                                </p>
+
+                                <span class="px-2 py-1 rounded text-xs {{ $pengajuanClass }}">
+                                    {{ ucfirst($item->status_pengajuan ?? '-') }}
+                                </span>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">
+                                    Validasi
+                                </p>
+
+                                <span class="px-2 py-1 rounded text-xs {{ $validasiClass }}">
+                                    {{ ucfirst($item->status_validasi) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-3 mt-5">
+
+                            <a href="{{ route('admin.penempatan.edit', $item) }}"
+                                class="flex-1 text-center bg-yellow-500 text-white rounded-md py-2 text-sm hover:bg-yellow-600">
+                                Edit
+                            </a>
+
+                            <form action="{{ route('admin.penempatan.destroy', $item) }}" method="POST" class="flex-1"
+                                onsubmit="return confirm('Yakin ingin menghapus penempatan ini?')">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="w-full bg-red-600 text-white rounded-md py-2 text-sm hover:bg-red-700">
+                                    Hapus
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                @empty
+
+                    <div class="bg-white rounded-lg border p-8 text-center text-gray-500">
+                        Data penempatan PKL belum tersedia
+                    </div>
+
+                @endforelse
             </div>
 
         </div>

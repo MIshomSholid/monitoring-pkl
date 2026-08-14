@@ -9,6 +9,7 @@ use Carbon\Carbon;
 
 class PeriodePklController extends Controller
 {
+    // Menampilkan daftar periode PKL
     public function index(Request $request)
     {
         $query = PeriodePkl::query();
@@ -21,18 +22,20 @@ class PeriodePklController extends Controller
             $query->where('is_active', false);
         }
 
+        // Mengurutkan data berdasarkan tanggal mulai terbaru
         $periode = $query->orderBy('tanggal_mulai', 'desc')->get();
 
         return view('dashboard.admin.periode.index', compact('periode'));
     }
 
-
+    // Menampilkan form tambah periode PKL
     public function create()
     {
         $lastPeriode = PeriodePkl::orderBy('tanggal_selesai', 'desc')->first();
 
         $minDate = now()->format('Y-m-d');
 
+        // Jika terdapat periode sebelumnya, tanggal mulai harus setelah periode tersebut selesai
         if ($lastPeriode) {
             $minDate = Carbon::parse($lastPeriode->tanggal_selesai)
                 ->addDay()
@@ -42,6 +45,7 @@ class PeriodePklController extends Controller
         return view('dashboard.admin.periode.create', compact('minDate'));
     }
 
+    // Menyimpan data periode PKL baru
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -53,6 +57,7 @@ class PeriodePklController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
+        // Memastikan tidak terdapat periode yang saling bertabrakan
         $overlap = PeriodePkl::where(function ($q) use ($data) {
 
             $q->whereBetween('tanggal_mulai', [$data['tanggal_mulai'], $data['tanggal_selesai']])
@@ -86,6 +91,7 @@ class PeriodePklController extends Controller
             ->with('success', 'Periode PKL berhasil ditambahkan');
     }
 
+    // Menampilkan form ubah periode PKL
     public function edit(PeriodePkl $periode)
     {
         $prevPeriode = PeriodePkl::where('tanggal_selesai', '<', $periode->tanggal_mulai)
@@ -103,6 +109,7 @@ class PeriodePklController extends Controller
         return view('dashboard.admin.periode.edit', compact('periode', 'minDate'));
     }
 
+    // Memperbarui data periode PKL
     public function update(Request $request, PeriodePkl $periode)
     {
         $data = $request->validate([
@@ -114,7 +121,7 @@ class PeriodePklController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        // ================= CEK PERIODE SEBELUMNYA =================
+        // CEK PERIODE SEBELUMNYA 
         $prevPeriode = PeriodePkl::where('id', '!=', $periode->id)
             ->where('tanggal_selesai', '<', $periode->tanggal_mulai)
             ->orderBy('tanggal_selesai', 'desc')
@@ -132,7 +139,7 @@ class PeriodePklController extends Controller
 
         }
 
-        // ================= CEK OVERLAP =================
+        // CEK OVERLAP
         $overlap = PeriodePkl::where('id', '!=', $periode->id)
             ->where(function ($q) use ($data) {
 
@@ -151,7 +158,7 @@ class PeriodePklController extends Controller
             ]);
         }
 
-        // ================= STATUS AKTIF =================
+        // STATUS AKTIF 
         if ($data['is_active']) {
             PeriodePkl::where('id', '!=', $periode->id)
                 ->update(['is_active' => false]);
@@ -166,9 +173,7 @@ class PeriodePklController extends Controller
 
     public function destroy(PeriodePkl $periode)
     {
-        /**
-         * Cek apakah periode masih dipakai
-         */
+        // Cek apakah periode masih dipakai
         $masihDipakai = $periode->penempatanPkl()->exists();
 
         if ($masihDipakai) {

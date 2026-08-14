@@ -10,6 +10,7 @@ use App\Models\PeriodePkl;
 
 class RekapPresensiController extends Controller
 {
+    // Menampilkan daftar rekap presensi siswa
     public function index(Request $request)
     {
         $query = Presensi::with([
@@ -18,8 +19,7 @@ class RekapPresensiController extends Controller
             'penempatanPkl.periodePkl'
         ]);
 
-        // ================= FILTER =================
-
+        // Memfilter data berdasarkan nama siswa
         if ($request->filled('nama_siswa')) {
             $query->whereHas('penempatanPkl.siswa', function ($q) use ($request) {
                 $q->where('nama_lengkap', 'like', '%' . $request->nama_siswa . '%');
@@ -46,8 +46,7 @@ class RekapPresensiController extends Controller
             ->latest('tanggal')
             ->paginate(15);
 
-        // ================= DROPDOWN =================
-
+        // Mengambil daftar tempat PKL untuk ditampilkan pada dropdown filter
         $daftarTempatPkl = TempatPkl::select('id', 'nama_perusahaan')
             ->orderBy('nama_perusahaan')
             ->get();
@@ -63,6 +62,7 @@ class RekapPresensiController extends Controller
         ));
     }
 
+    // Menampilkan detail data presensi
     public function show($id)
     {
         $detail = Presensi::with([

@@ -10,9 +10,7 @@ use Cloudinary\Cloudinary;
 
 class GuruPembimbingController extends Controller
 {
-    /**
-     * Tampilkan daftar guru pembimbing
-     */
+    // Tampilkan daftar guru pembimbing
     public function index(Request $request)
     {
         $query = GuruPembimbing::with('user');
@@ -37,9 +35,7 @@ class GuruPembimbingController extends Controller
         return view('dashboard.admin.guru-data.index', compact('guru'));
     }
 
-    /**
-     * Form tambah data diri guru pembimbing
-     */
+    // Form tambah data diri guru pembimbing
     public function create()
     {
         $users = User::where('role', 'guru_pembimbing')
@@ -49,9 +45,7 @@ class GuruPembimbingController extends Controller
         return view('dashboard.admin.guru-data.create', compact('users'));
     }
 
-    /**
-     * Simpan data diri guru pembimbing
-     */
+    // Simpan data diri guru pembimbing
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -98,17 +92,13 @@ class GuruPembimbingController extends Controller
             ->with('success', 'Data guru pembimbing berhasil disimpan');
     }
 
-    /**
-     * Form edit data diri guru pembimbing
-     */
+    // Form edit data diri guru pembimbing
     public function edit(GuruPembimbing $guru)
     {
         return view('dashboard.admin.guru-data.edit', compact('guru'));
     }
 
-    /**
-     * Update data diri guru pembimbing
-     */
+    // Update data diri guru pembimbing
     public function update(Request $request, GuruPembimbing $guru)
     {
         $validated = $request->validate([
@@ -146,9 +136,7 @@ class GuruPembimbingController extends Controller
             ->with('success', 'Data guru pembimbing berhasil diperbarui');
     }
 
-    /**
-     * Hapus data diri guru pembimbing
-     */
+    // Hapus data diri guru pembimbing
     public function destroy(GuruPembimbing $guru)
     {
         $guru->delete();

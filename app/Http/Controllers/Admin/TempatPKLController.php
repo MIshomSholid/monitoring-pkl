@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 
 class TempatPKLController extends Controller
 {
+    // Menampilkan daftar data tempat PKL
     public function index(Request $request)
     {
         $query = TempatPkl::with('penempatanPkl');
 
-        // SEARCH
+        // Memfilter data berdasarkan nama perusahaan, alamat, email, atau nomor telepon
         if ($request->filled('search')) {
             $search = $request->search;
 
@@ -31,11 +32,13 @@ class TempatPKLController extends Controller
         return view('dashboard.admin.tempat-pkl.index', compact('tempat'));
     }
 
+    // Menampilkan form tambah tempat PKL
     public function create()
     {
         return view('dashboard.admin.tempat-pkl.create');
     }
 
+    // Menyimpan data tempat PKL baru
     public function store(Request $request)
     {
         $request->validate([
@@ -59,7 +62,7 @@ class TempatPKLController extends Controller
             'radius_meter' => $request->radius_meter,
             'kuota_siswa' => $request->kuota_siswa,
 
-            // SIMPAN SETTING PRESENSI
+            // Menyimpan pengaturan presensi pada tempat PKL
             'jam_masuk' => $request->jam_masuk,
             'toleransi_keterlambatan' => $request->toleransi_keterlambatan,
             'hari_wajib' => $request->hari_wajib,
@@ -70,11 +73,13 @@ class TempatPKLController extends Controller
             ->with('success', 'Tempat PKL berhasil ditambahkan');
     }
 
+    // Menampilkan form ubah tempat PKL
     public function edit(TempatPkl $tempatPkl)
     {
         return view('dashboard.admin.tempat-pkl.edit', compact('tempatPkl'));
     }
 
+    // Memperbarui data tempat PKL
     public function update(Request $request, TempatPkl $tempatPkl)
     {
         $request->validate([
@@ -111,9 +116,7 @@ class TempatPKLController extends Controller
 
     public function destroy(TempatPkl $tempatPkl)
     {
-        /**
-         * Cek apakah masih dipakai siswa aktif
-         */
+        // Cek apakah masih dipakai siswa aktif
         $masihDipakai = $tempatPkl->penempatanPkl()
             ->where('status', 'aktif')
             ->exists();

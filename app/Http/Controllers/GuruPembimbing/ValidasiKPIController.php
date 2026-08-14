@@ -24,14 +24,14 @@ class ValidasiKPIController extends Controller
                     ->whereHas('siswa.user', fn($qq) => $qq->where('is_active', 1));
             });
 
-        /* ================= FILTER SISWA ================= */
+        // Memfilter data berdasarkan siswa
         if ($request->filled('siswa_id')) {
             $query->whereHas('penempatanPkl', function ($q) use ($request) {
                 $q->where('siswa_id', $request->siswa_id);
             });
         }
 
-        /* ================= AMBIL SEMUA TANGGAL KPI ================= */
+        // Mengambil daftar tanggal penilaian KPI
         $tanggalList = (clone $query)
             ->select('periode_penilaian')
             ->distinct()
@@ -39,7 +39,7 @@ class ValidasiKPIController extends Controller
             ->pluck('periode_penilaian')
             ->values();
 
-        /* ================= TANGGAL AKTIF ================= */
+        // Menentukan tanggal penilaian yang sedang ditampilkan
         $tanggalAktif = $request->tanggal ?? $tanggalList->first();
 
         if (!$tanggalAktif) {
@@ -59,7 +59,7 @@ class ValidasiKPIController extends Controller
         //     ->get()
         //     ->groupBy('penempatan_pkl_id');
 
-        /* ================= NAVIGASI PREV / NEXT ================= */
+        // NAVIGASI PREV / NEXT 
         $index = $tanggalList->search($tanggalAktif);
 
         $prev = null;
@@ -70,7 +70,7 @@ class ValidasiKPIController extends Controller
             $next = $index > 0 ? $tanggalList[$index - 1] : null;
         }
 
-        /* ================= DROPDOWN SISWA ================= */
+        // DROPDOWN SISWA 
         $daftarSiswa = $guru->penempatanPkl()
             ->with('siswa')
             ->where('status', 'aktif')
@@ -92,6 +92,7 @@ class ValidasiKPIController extends Controller
         );
     }
 
+    // Memvalidasi penilaian KPI siswa
     public function validateKpi(Request $request, $penempatanPklId, $tanggal)
     {
         $request->validate([

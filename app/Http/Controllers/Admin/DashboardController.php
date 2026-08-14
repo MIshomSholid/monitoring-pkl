@@ -20,19 +20,13 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
 
-        // =========================
         // STATISTIK UMUM
-        // =========================
-
         $totalSiswa = PenempatanPkl::distinct('siswa_id')->count('siswa_id');
         $totalTempat = TempatPkl::count();
         $periodeAktif = PeriodePkl::getAktif();
         $penempatanAktif = PenempatanPkl::where('status', 'aktif')->count();
 
-        // =========================
         // MONITORING HARI INI
-        // =========================
-
         $presensiHariIni = Presensi::whereDate('tanggal', $today)->count();
 
         $hadirHariIni = Presensi::whereDate('tanggal', today())
@@ -53,19 +47,13 @@ class DashboardController extends Controller
 
         $laporanHariIni = LaporanKegiatan::whereDate('tanggal', $today)->count();
 
-        // =========================
         // STATUS VALIDASI
-        // =========================
-
         $presensiPending = Presensi::where('status_validasi', 'menunggu')->count();
         $laporanPending = LaporanKegiatan::where('status_validasi', 'menunggu')->count();
         $laporanAkhirPending = LaporanAkhirPkl::where('status_validasi', 'menunggu')->count();
         $kpiPending = PenilaianKpi::where('status_validasi', 'menunggu')->count();
 
-        // =========================
         // GRAFIK BULANAN (6 BULAN TERAKHIR)
-        // =========================
-
         $bulanLabels = [];
         $hadirData = [];
         $izinData = [];
@@ -97,10 +85,7 @@ class DashboardController extends Controller
                 ->count();
         }
 
-        // =========================
         // GRAFIK VALIDASI
-        // =========================
-
         $validasiMenunggu =
             Presensi::where('status_validasi', 'menunggu')->count() +
             LaporanKegiatan::where('status_validasi', 'menunggu')->count() +

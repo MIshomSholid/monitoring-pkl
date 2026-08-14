@@ -13,11 +13,7 @@ use Illuminate\Support\Facades\File;
 
 class LaporanAkhirController extends Controller
 {
-    /**
-     * ===============================
-     * HALAMAN PILIH PERIODE
-     * ===============================
-     */
+    // HALAMAN PILIH PERIODE
     public function index()
     {
         return view('dashboard.admin.laporan-akhir.index', [
@@ -25,11 +21,7 @@ class LaporanAkhirController extends Controller
         ]);
     }
 
-    /**
-     * ===============================
-     * PREVIEW DATA SISWA PER PERIODE
-     * ===============================
-     */
+    // PREVIEW DATA SISWA PER PERIODE
     public function preview(Request $request)
     {
         $request->validate([
@@ -54,11 +46,7 @@ class LaporanAkhirController extends Controller
         ]);
     }
 
-    /**
-     * ===============================
-     * EXPORT PDF PER SISWA (FINAL + VALIDASI GURU)
-     * ===============================
-     */
+    // EXPORT PDF PER SISWA (FINAL + VALIDASI GURU)
     public function exportPdf(Request $request)
     {
         $request->validate([
@@ -77,10 +65,7 @@ class LaporanAkhirController extends Controller
             'penilaianKpi.indikator.kategori'
         ])->findOrFail($request->penempatan_id);
 
-        /**
-         * PROTEKSI:
-         * Hanya boleh cetak jika sudah disetujui Guru Pembimbing
-         */
+        // Hanya boleh cetak jika sudah disetujui Guru Pembimbing
         if (
             !$penempatan->laporanAkhir ||
             $penempatan->laporanAkhir->status_validasi !== 'diterima'
@@ -88,11 +73,7 @@ class LaporanAkhirController extends Controller
             return back()->with('error', 'Laporan belum disetujui Guru Pembimbing.');
         }
 
-        /**
-         * ===============================
-         * KONFIGURASI DOMPDF
-         * ===============================
-         */
+        // KONFIGURASI DOMPDF
         $options = new Options();
         $options->set('defaultFont', 'DejaVu Sans');
         $options->set('isRemoteEnabled', true);
@@ -116,11 +97,7 @@ class LaporanAkhirController extends Controller
         );
     }
 
-    /**
-     * ===============================
-     * EXPORT SEMUA PDF PER PERIODE
-     * ===============================
-     */
+    // EXPORT SEMUA PDF PER PERIODE
     public function exportAllPdf(Request $request)
     {
         $request->validate([
@@ -128,10 +105,8 @@ class LaporanAkhirController extends Controller
             'jenis_laporan' => 'required|in:presensi,nilai,akhir'
         ]);
 
-        /**
-         * Ambil semua penempatan
-         * yang SUDAH disetujui guru
-         */
+        // Ambil semua penempatan
+        // yang SUDAH disetujui guru
         $penempatanList = PenempatanPkl::with([
             'siswa',
             'tempat',
@@ -152,18 +127,14 @@ class LaporanAkhirController extends Controller
             return back()->with('error', 'Tidak ada laporan yang disetujui.');
         }
 
-        /**
-         * Folder temporary
-         */
+        // Folder temporary
         $tempPath = storage_path('app/temp-pdf-' . time());
 
         if (!File::exists($tempPath)) {
             File::makeDirectory($tempPath, 0755, true);
         }
 
-        /**
-         * Nama ZIP
-         */
+        // Nama ZIP
         $jenisLabel = match ($request->jenis_laporan) {
             'presensi' => 'Rekap-Presensi',
             'nilai' => 'Rekap-Nilai',
@@ -197,9 +168,7 @@ class LaporanAkhirController extends Controller
 
             foreach ($penempatanList as $penempatan) {
 
-                /**
-                 * DOMPDF
-                 */
+                // DOMPDF
                 $options = new Options();
                 $options->set('defaultFont', 'DejaVu Sans');
                 $options->set('isRemoteEnabled', true);
@@ -217,9 +186,7 @@ class LaporanAkhirController extends Controller
                 $dompdf->setPaper('A4', 'portrait');
                 $dompdf->render();
 
-                /**
-                 * Nama file PDF
-                 */
+                // Nama file PDF
                 $nis = str_replace('/', '_', $penempatan->siswa->nis);
 
                 $pdfName = 'Laporan-' .
@@ -232,9 +199,7 @@ class LaporanAkhirController extends Controller
 
                 file_put_contents($pdfPath, $dompdf->output());
 
-                /**
-                 * Masukkan ke ZIP
-                 */
+                // Masukkan ke ZIP
                 $zip->addFile($pdfPath, $pdfName);
             }
 
@@ -243,9 +208,7 @@ class LaporanAkhirController extends Controller
 
         File::deleteDirectory($tempPath);
 
-        /**
-         * Hapus temporary setelah download
-         */
+        // Hapus temporary setelah download
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }

@@ -15,6 +15,7 @@ use Carbon\Carbon;
 
 class MonitoringKPIController extends Controller
 {
+    // Menampilkan halaman monitoring KPI siswa bimbingan
     public function index(Request $request)
     {
         $guru = GuruPembimbing::where('user_id', Auth::id())->firstOrFail();
@@ -79,12 +80,7 @@ class MonitoringKPIController extends Controller
         ]);
     }
 
-    /*
-    =====================================================
-    HELPERS INDEX
-    =====================================================
-    */
-
+    // Menyediakan nilai awal ketika belum terdapat data yang dipilih
     private function defaultState(): array
     {
         return [
@@ -106,6 +102,7 @@ class MonitoringKPIController extends Controller
         ];
     }
 
+    // Mengambil seluruh data penempatan PKL aktif yang dibimbing oleh guru pembimbing
     private function getPenempatanAktif($guru)
     {
         return PenempatanPkl::withoutGlobalScope('aktif')
@@ -116,6 +113,7 @@ class MonitoringKPIController extends Controller
             ->get();
     }
 
+    // Mengambil data penempatan PKL berdasarkan ID penempatan
     private function findPenempatan($penempatanId, $guru)
     {
         return PenempatanPkl::withoutGlobalScope('aktif')
@@ -126,6 +124,7 @@ class MonitoringKPIController extends Controller
             ->first();
     }
 
+    // Mengambil seluruh data penilaian KPI yang telah divalidasi
     private function getAllKpi($penempatanId)
     {
         return PenilaianKpi::with('indikator.kategori')
@@ -135,6 +134,7 @@ class MonitoringKPIController extends Controller
             ->get();
     }
 
+    // Menentukan tanggal aktif serta navigasi ke tanggal sebelumnya dan berikutnya
     private function resolveTanggalNavigasi($penempatanId, ?string $requestedTanggal): array
     {
         $tanggalList = PenilaianKpi::where('penempatan_pkl_id', $penempatanId)
@@ -155,6 +155,7 @@ class MonitoringKPIController extends Controller
         return [$tanggalAktif, $prev, $next];
     }
 
+    // Mengambil data penilaian KPI berdasarkan tanggal yang dipilih
     private function getKpiByTanggal($penempatanId, string $tanggal)
     {
         return PenilaianKpi::with('indikator.kategori')
@@ -165,6 +166,7 @@ class MonitoringKPIController extends Controller
             ->get();
     }
 
+    // Mengambil bobot setiap kategori KPI dari database
     private function getBobot(): array
     {
         $bobot = KpiKategori::pluck('bobot_persen', 'nama_kategori');
@@ -177,6 +179,7 @@ class MonitoringKPIController extends Controller
         ];
     }
 
+    // Menghitung nilai akhir KPI berdasarkan bobot setiap kategori penilaian
     private function hitungNilaiAkhir($semuaKpi, $penempatanModel, $penempatanId, array $bobot): array
     {
         $nilaiTeknis    = $this->hitungTeknis($semuaKpi);
@@ -197,12 +200,7 @@ class MonitoringKPIController extends Controller
         return [$nilaiTeknisBobot, $nilaiNonTeknisBobot, $nilaiPresensiBobot, $nilaiLaporanBobot, $rataRata];
     }
 
-    /*
-    =====================================================
-    HITUNG TEKNIS
-    =====================================================
-    */
-
+    // Menghitung rata-rata nilai aspek teknis
     private function hitungTeknis($kpi)
     {
         $data = $kpi->filter(
@@ -214,12 +212,7 @@ class MonitoringKPIController extends Controller
             : 0;
     }
 
-    /*
-    =====================================================
-    HITUNG NON TEKNIS
-    =====================================================
-    */
-
+    // Menghitung rata-rata nilai aspek non-teknis
     private function hitungNonTeknis($kpi)
     {
         $data = $kpi->filter(
@@ -235,12 +228,7 @@ class MonitoringKPIController extends Controller
             : 0;
     }
 
-    /*
-    =====================================================
-    HITUNG PRESENSI
-    =====================================================
-    */
-
+    // Menghitung nilai aspek presensi berdasarkan kehadiran siswa selama periode PKL
     private function hitungPresensi($penempatan)
     {
         $tanggalMulai  = Carbon::parse($penempatan->tanggal_mulai);
@@ -279,6 +267,7 @@ class MonitoringKPIController extends Controller
             : 0;
     }
 
+    // Menyusun daftar tanggal yang termasuk hari wajib PKL
     private function buildTanggalWajib(Carbon $mulai, Carbon $batas, $hariWajib, array $mapping)
     {
         $cursor = $mulai->copy();
@@ -295,6 +284,7 @@ class MonitoringKPIController extends Controller
         return $tanggalWajib;
     }
 
+    // Menghitung total nilai presensi berdasarkan aturan penilaian presensi
     private function hitungTotalNilaiPresensi($tanggalWajib, $presensi, $jamMasuk, int $toleransi): int
     {
         $total = 0;
@@ -322,12 +312,7 @@ class MonitoringKPIController extends Controller
         return $total;
     }
 
-    /*
-    =====================================================
-    HITUNG LAPORAN
-    =====================================================
-    */
-
+    // Menghitung nilai aspek laporan berdasarkan persentase laporan yang telah divalidasi
     private function hitungLaporan($penempatanId)
     {
         $base = LaporanKegiatan::where('penempatan_pkl_id', $penempatanId)

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InformasiPKLController extends Controller
 {
-    /**
-     * List informasi PKL
-     */
+    // List informasi PKL
     public function index()
     {
         $informasi = InformasiPkl::orderBy('tanggal_publish', 'desc')->get();
@@ -19,17 +17,13 @@ class InformasiPKLController extends Controller
         return view('dashboard.admin.informasi-pkl.index', compact('informasi'));
     }
 
-    /**
-     * Form create
-     */
+    // Form create
     public function create()
     {
         return view('dashboard.admin.informasi-pkl.create');
     }
 
-    /**
-     * Simpan data
-     */
+    // Simpan data
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -54,9 +48,7 @@ class InformasiPKLController extends Controller
             ->with('success', 'Informasi PKL berhasil ditambahkan');
     }
 
-    /**
-     * Form edit
-     */
+    // Form edit
     public function edit(InformasiPkl $informasiPkl)
     {
         return view(
@@ -65,9 +57,7 @@ class InformasiPKLController extends Controller
         );
     }
 
-    /**
-     * Update data
-     */
+    //Update data
     public function update(Request $request, InformasiPkl $informasiPkl)
     {
         $validated = $request->validate([
@@ -91,9 +81,7 @@ class InformasiPKLController extends Controller
             ->with('success', 'Informasi PKL berhasil diperbarui');
     }
 
-    /**
-     * Hapus data
-     */
+    // Hapus data
     public function destroy(InformasiPkl $informasiPkl)
     {
         $informasiPkl->delete();

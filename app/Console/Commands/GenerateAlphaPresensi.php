@@ -12,6 +12,7 @@ use DB;
 
 class GenerateAlphaPresensi extends Command
 {
+    //php artisan presensi:generate-alpha
     protected $signature = 'presensi:generate-alpha';
     protected $description = 'Generate presensi ALPHA untuk siswa yang tidak presensi pada hari wajib';
 
@@ -39,6 +40,7 @@ class GenerateAlphaPresensi extends Command
         $this->info("Tanggal generate: " . $tanggal);
         $this->info("Total PKL ditemukan: " . $penempatanList->count());
 
+        //Memproses setiap data penempatan PKL.
         foreach ($penempatanList as $pkl) {
 
             $hariWajib = $pkl->tempatPkl->hari_wajib ?? [];
@@ -47,10 +49,12 @@ class GenerateAlphaPresensi extends Command
                 return strtolower(trim($h));
             }, $hariWajib);
 
+            //Jika hari sekarang bukan termasuk hari wajib
             if (!in_array($namaHari, $hariWajib)) {
                 continue;
             }
 
+            //Mengecek apakah siswa sudah memiliki presensi pada tanggal tersebut
             $sudahAda = Presensi::where('penempatan_pkl_id', $pkl->id)
                 ->whereDate('tanggal', $tanggal)
                 ->exists();
@@ -59,6 +63,7 @@ class GenerateAlphaPresensi extends Command
                 continue;
             }
 
+            //Membuat presensi otomatis dengan jenis alpha.
             $presensi = Presensi::create([
                 'penempatan_pkl_id' => $pkl->id,
                 'tanggal' => $tanggal,
@@ -67,6 +72,7 @@ class GenerateAlphaPresensi extends Command
                 'status_validasi' => 'diterima',
             ]);
 
+            //Mengirim data realtime ke Node.js
             Http::post(env('REALTIME_URL') . '/broadcast', [
                 'event' => 'presensi.created',
                 'data' => [

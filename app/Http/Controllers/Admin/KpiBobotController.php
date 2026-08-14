@@ -21,7 +21,7 @@ class KpiBobotController extends Controller
     {
         $kategoriInput = $request->kategori ?? [];
 
-        // ================= VALIDASI TOTAL BOBOT KATEGORI =================
+        // VALIDASI TOTAL BOBOT KATEGORI 
         $totalKategori = array_sum($kategoriInput);
 
         if ($totalKategori != 100) {

@@ -11,11 +11,7 @@ use Cloudinary\Cloudinary;
 
 class AdminDataController extends Controller
 {
-    /**
-     * ========================
-     * LIST DATA ADMIN
-     * ========================
-     */
+    // LIST DATA ADMIN
     public function index(Request $request)
     {
         $query = Admin::with('user');
@@ -37,11 +33,7 @@ class AdminDataController extends Controller
         return view('dashboard.admin.admin-data.index', compact('admins'));
     }
 
-    /**
-     * ========================
-     * FORM CREATE
-     * ========================
-     */
+    // FORM CREATE
     public function create()
     {
         $users = User::where('role', 'admin')
@@ -51,11 +43,7 @@ class AdminDataController extends Controller
         return view('dashboard.admin.admin-data.create', compact('users'));
     }
 
-    /**
-     * ========================
-     * SIMPAN DATA
-     * ========================
-     */
+    //SIMPAN DATA
     public function store(Request $request)
     {
         $request->validate([
@@ -69,9 +57,10 @@ class AdminDataController extends Controller
         try {
             DB::transaction(function () use ($request) {
 
-                // HANDLE FOTO
+                // Inisialisasi path foto
                 $fotoPath = null;
 
+                // Memeriksa apakah pengguna mengunggah foto profil
                 if ($request->hasFile('foto_profil')) {
 
                     $cloudinary = new Cloudinary([
@@ -82,6 +71,7 @@ class AdminDataController extends Controller
                         ],
                     ]);
 
+                    // Mengunggah foto profil ke Cloudinary
                     $upload = $cloudinary->uploadApi()->upload(
                         $request->file('foto_profil')->getRealPath(),
                         [
@@ -110,11 +100,7 @@ class AdminDataController extends Controller
             ->with('success', 'Admin berhasil ditambahkan');
     }
 
-    /**
-     * ========================
-     * DETAIL
-     * ========================
-     */
+    // DETAIL
     public function show($id)
     {
         $admin = Admin::with('user')->findOrFail($id);
@@ -122,11 +108,7 @@ class AdminDataController extends Controller
         return view('dashboard.admin.admin-data.show', compact('admin'));
     }
 
-    /**
-     * ========================
-     * FORM EDIT
-     * ========================
-     */
+    // FORM EDIT
     public function edit($id)
     {
         $admin = Admin::findOrFail($id);
@@ -141,11 +123,7 @@ class AdminDataController extends Controller
         return view('dashboard.admin.admin-data.edit', compact('admin', 'users'));
     }
 
-    /**
-     * ========================
-     * UPDATE
-     * ========================
-     */
+    // UPDATE
     public function update(Request $request, $id)
     {
         $admin = Admin::findOrFail($id);
@@ -160,7 +138,7 @@ class AdminDataController extends Controller
         try {
             DB::transaction(function () use ($request, $admin) {
 
-                // HANDLE FOTO
+                // Memeriksa apakah terdapat foto profil baru
                 if ($request->hasFile('foto_profil')) {
 
                     $cloudinary = new Cloudinary([
@@ -198,11 +176,7 @@ class AdminDataController extends Controller
             ->with('success', 'Admin berhasil diperbarui');
     }
 
-    /**
-     * ========================
-     * DELETE
-     * ========================
-     */
+    // DELETE
     public function destroy($id)
     {
         $admin = Admin::findOrFail($id);

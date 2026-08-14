@@ -13,6 +13,7 @@ use App\Models\PenilaianKpi;
 
 class DashboardController extends Controller
 {
+    // Menampilkan halaman dashboard guru pembimbing
     public function index()
     {
         $userId = Auth::id();
@@ -36,29 +37,21 @@ class DashboardController extends Controller
             ->whereHas('siswa.user', fn($q) => $q->active())
             ->pluck('id');
 
-        // =====================
         // JUMLAH SISWA BIMBINGAN
-        // =====================
         $jumlahSiswa = $penempatanIds->count();
 
-        // =====================
         // PRESENSI HARI INI (SUDAH DIVALIDASI LAPANGAN)
-        // =====================
         $presensiHariIni = Presensi::whereIn('penempatan_pkl_id', $penempatanIds)
             ->whereDate('tanggal', $today)
             ->where('status_validasi', 'diterima')
             ->count();
 
-        // =====================
         // LAPORAN MENUNGGU VALIDASI GURU
-        // =====================
         $laporanMenunggu = LaporanKegiatan::whereIn('penempatan_pkl_id', $penempatanIds)
             ->where('status_validasi', 'menunggu')
             ->count();
 
-        // =====================
         // KPI MENUNGGU VALIDASI GURU
-        // =====================
         $kpiMenunggu = PenilaianKpi::whereIn('penempatan_pkl_id', $penempatanIds)
             ->where('status_validasi', 'menunggu')
             ->count();
